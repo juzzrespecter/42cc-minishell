@@ -16,6 +16,7 @@ void	data_init(t_data *data, char **envp)
 	data->fd_in = 0;
 	data->fd_out = 1;
 	data->input = NULL;
+	data->status = 0;
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -30,7 +31,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		free(data->input);
 		sig_init();
-		ft_putstr_fd("minishell> ", 2);
+		ft_putstr_fd("DANFER_minishell> ", 2);
 		ret = get_next_line(0, &data->input);
 		if (!ret)
 			free_data(&data);

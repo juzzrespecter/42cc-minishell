@@ -17,8 +17,7 @@ typedef	struct	s_data
 	int		fd_out;
 	char		*pwd;
 	char		input;
-	//int		status;
-	//int		quit;
+	int		status;
 }				t_data;
 
 int	parser(t_data *data);
@@ -29,5 +28,7 @@ void	free_env(char **env);
 int	env_len(char **env);
 void	b_env(char **env);
 void	b_pwd(t_data *data);
+void	b_exit(char **inputs, t_data *data);
+int	is_number(char *str);
 
 #endif
