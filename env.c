@@ -39,3 +39,28 @@ char	**copy_env(char **env)
 	data_env[i] = 0;
 	return (data_env);
 }
+
+void	b_env(char **env)
+{
+	int		i;
+	int		j;
+	char	*str;
+
+	i = 0;
+	while (env[i])
+	{
+		str = ft_strstr(env[i], "=");
+		if (str)
+		{
+			j = 0;
+			while (env[i][j])
+			{
+				write(1, &env[i][j], 1);
+				j++;
+			}
+			ft_putchar('\n');
+		}
+		i++;
+	}
+}
+

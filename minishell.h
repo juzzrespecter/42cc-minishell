@@ -27,5 +27,7 @@ void	handle_sig(int sig)
 char	**copy_env(char **env);
 void	free_env(char **env);
 int	env_len(char **env);
+void	b_env(char **env);
+void	b_pwd(t_data *data);
 
 #endif
