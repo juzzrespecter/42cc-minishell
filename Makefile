@@ -1,5 +1,5 @@
 
-SRCS	= main.c env.c signal.c parser.c
+SRCS	= main.c env.c signal.c parser.c pwd.c exit.c
 
 OBJS	= $(SRCS:.c=.o)
 
@@ -18,7 +18,7 @@ INCLUDE	= -L libft -lft
 
 all:	$(NAME)
 
-.PHONY:	clean fclean re bonus bench bclean
+.PHONY:	clean fclean re 
 
 $(NAME): $(OBJS)
 	cd libft && $(MAKE)
