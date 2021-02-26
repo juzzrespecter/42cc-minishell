@@ -20,5 +20,4 @@ int	cd(char **argv, char **env)
 	if ((dir_out = chdir(path)) == -1)
 		print_error(argv[0], strerror(errno));
 	return ((dir_out == -1) ? 1 : 0);
-
 }

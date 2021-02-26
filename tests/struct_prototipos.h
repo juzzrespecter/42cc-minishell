@@ -11,7 +11,7 @@ typedef struct		s_cmd {
 	struct s_cmd	*next;
 }			t_cmd;
 
-typedef struct		s_process {
-	struct s_cmd	*cmd;
-	struct s_cmd	*next;
-}			t_process;
+typedef struct			s_process {
+	struct s_cmd		*cmd;
+	struct s_process	*next;
+}						t_process;
