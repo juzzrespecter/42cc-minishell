@@ -1,10 +1,10 @@
 #include "minishell.c"
 
-int	cd(char **argv, char **env)
+int	cd(t_cmd *cmd, char **env)
 {
 	char	*path;
 	char	*home;
-	int	dir_out;
+	int		dir_out;
 
 	home = search_env(env, "HOME");
 	path = argv[1];

@@ -1,16 +1,16 @@
 #include "minishell.h"
 
-char	*search_env(char **env, char *key)
+char	*search_env(char **env, char *name)
 {
 	char	*value;
-	int	key_len;
+	int	name_len;
 	int	i;
 
-	key_len = ft_strlen(key);
+	name_len = ft_strlen(name) + 1;
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(key, env[i], key_len))
+		if (ft_strncmp(name, env[i], name_len))
 			return (env[i]);
 		i++;
 	}
