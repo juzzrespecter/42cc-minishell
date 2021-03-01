@@ -23,18 +23,18 @@ void	b_exit(char **inputs, t_data *data)
 	{
 		if (is_number(inputs[1]))
 		{
-			if (inputs[2])
+			if (inputs[2])			//si hay un segundo argumento
 			{
-				data->status = 2;
+				data->status = 2; //Bash exit code status es 2 para Missing Keyword or Command
 				return (ft_putstr_fd("Error: Too Many Arguments\n", 2));
 			}
-			data->status = ft_atoi(inputs[1]);
-			if (data->status > 255 || data->status < 0)
+			data->status = ft_atoi(inputs[1]); //Bash exit code status es el numero que nos hayan pasado como argumento de Exit
+			if (data->status > 255 || data->status < 0) //no puede ser mayor de 255 o negativo
 				data->status = 255;
 		}
-		else
+		else			//si no hay ningún argumento
 		{
-			data->status = 2;
+			data->status = 2;	//Bash exit code status es 2 para Missing Keyword or Command
 			return (ft_putstr_fd("Error: Numeric Argument Required\n", 2));
 		}
 	}

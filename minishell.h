@@ -30,5 +30,7 @@ void	b_env(char **env);
 void	b_pwd(t_data *data);
 void	b_exit(char **inputs, t_data *data);
 int	is_number(char *str);
+int	b_pipe(char *input1, char *input2, t_data *data);
+void	parent(char *input2, t_data *data, int pid, int *fds)
 
 #endif
