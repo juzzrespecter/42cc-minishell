@@ -20,7 +20,7 @@ int	cd(t_cmd *cmd, t_data *data)
 	if ((id = ft_strjoin("PWD=", pwd)) == NULL)
 		return (print_error(cmd->argv[0], strerror(errno)));
 	free(pwd);
-	export_pwd_ret = export_add_id(id, data);
+	export_pwd_ret = env_add_id(id, data);
 	free(id);
 	return (export_pwd_ret);
 }
