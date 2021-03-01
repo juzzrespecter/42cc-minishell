@@ -2,22 +2,22 @@
 
 int	cd(t_cmd *cmd, t_data *data)
 {
-	char	*path;																/* path al directorio de destino	*/
-	char	*home;																/* variable de entorno HOME 		*/
-	char	*pwd;																/* variable de entorno PWD (se actualiza con cada llamada a cd	*/
-	char	*id;																/* id: string en el array de strings env para actualizar PWD	*/
+	char	*path;                                                              /* path al directorio de destino                                */
+	char	*home;                                                              /* variable de entorno HOME                                     */
+	char	*pwd;                                                               /* variable de entorno PWD (se actualiza con cada llamada a cd  */
+	char	*id;                                                                /* id: string en el array de strings env para actualizar PWD    */
 	int		export_pwd_ret;
 
 	path = cmd->argv[1];
-	if (path == NULL)															/* si cd se ejecuta sin argumento, usa la variable de entorno HOME	*/
+	if (path == NULL)                                                           /* si cd se ejecuta sin argumento, usa la variable de entorno HOME  */
 	{
 		if ((home = search_env(data->env, "HOME=")) == NULL)
-		       return (print_error(cmd->argv[1], "HOME not set", cmd->fd_err));	/* sin argumento y sin HOME, cd lanza error y sale con 1	*/
-		path = home + 5;														/* desplaza el puntero a HOME hasta el inicio del path	*/ 
+		       return (print_error(cmd->argv[1], "HOME not set", cmd->fd_err)); /* sin argumento y sin HOME, cd lanza error y sale con 1            */
+		path = home + 5;                                                        /* desplaza el puntero a HOME hasta el inicio del path              */ 
 	}
-	if (chdir(path) == -1 || (pwd = getcwd(NULL, 0)) == NULL)					/* lanza chdir e intenta recibir el nuevo path absoluto por getcwd	*/
+	if (chdir(path) == -1 || (pwd = getcwd(NULL, 0)) == NULL)                   /* lanza chdir e intenta recibir el nuevo path absoluto por getcwd  */
 		return (print_error(cmd->argv[0], strerror(errno), cmd->fd_err));
-	if ((id = ft_strjoin("PWD=", pwd)) == NULL)									/* monta el id (name=value) para guardarlo en env	*/
+	if ((id = ft_strjoin("PWD=", pwd)) == NULL)                                 /* monta el id (name=value) para guardarlo en env                   */
 		return (print_error(cmd->argv[0], strerror(errno), cmd->fd_err));
 	free(pwd);
 	export_pwd_ret = env_add_id(id, data);

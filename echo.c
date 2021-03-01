@@ -2,7 +2,7 @@
 
 int		echo(t_cmd *cmd)
 {
-	int		n_flag;					/*	flag -n: no imprime salto de linea al final de la cadena	*/
+	int		n_flag;					/* flag -n: no imprime salto de linea al final de la cadena  */
 	int		i;
 	int		fd_out;
 	char	**argv;
