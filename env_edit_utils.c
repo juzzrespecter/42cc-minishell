@@ -26,42 +26,42 @@ static char		**export_new_env(char **env, char *id)
 	return (new_env);
 }
 
-int				env_add_id(char *id, t_data *data)
-{
-	int		i;
+int				env_add_id(char *id, t_data *data)	/* 2 casos: la variable a guardar existe, se actualiza ese array				*/
+{													/* o no encuentra coincidencia, crea nueva tabla con la nueva variable al final	*/
+	int		i;										/* devuelve 0 con exito, -1 con fallo de asignacion de memoria dinamica			*/
 	char	**new_env;
 
 	i = 0;
-	if (ft_strrchr(id, '=') == NULL)
+	if (ft_strrchr(id, '=') == NULL)				/* si el formato de id es NAME sin una variable, se ignora y no lanza fallo	*/
 			return (0);
 	while (data->env[i])
 	{
-		if (ft_strncmp(data->env[i], id, (ft_strrchr(id, '=') - id + 1)) == 0)
+		if (ft_strncmp(data->env[i], id, (ft_strrchr(id, '=') - id + 1)) == 0)	/* variable existe: la actualiza y vuelve	*/	
 		{
 			data->env[i] = ft_strdup(id);
 			return (data->env[i] ? 0 : -1);
 		}
 		i++;
 	}
-	if ((new_env = export_new_env(data->env, id)) == NULL)
+	if ((new_env = export_new_env(data->env, id)) == NULL)	/* variable no existe: crea nueva tabla		*/
 		return (-1);
 	free_env(data->env);
 	data->env = new_env;
 	return (0);
 }
 
-int				env_parse_id(char *id)
-{
+int				env_parse_id(char *id)				/* analisis del string de la variable de entorno, id == NAME=VALUE	*/
+{													/* devuelve 0 si el nombre es valido, 1 si encuentra error			*/ 
 	int		i;
 
 	i = 0;
 	while (id[i] != '=' && id[i] != 0)
 	{
-		if (!(id[i] == '_' || ft_isalnum(id[i])))
+		if (!(id[i] == '_' || ft_isalnum(id[i])))	/* name solo admite caracteres [A-Za-z0-9_]	*/
 			return (1);
 		i++;
 	}
-	if (!i)
+	if (!i)											/* id no admite una cadena vacia como nombre de variable	*/
 		return (1);
 	return (0);
 }
