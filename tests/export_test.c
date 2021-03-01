@@ -39,7 +39,7 @@ static char		**export_new_env(char **env, char *id)
 
 	i = 0;
 	old_env_len = env_len(env);
-	new_env = (char **)ft_calloc(old_env_len + 1, sizeof(char *));
+	new_env = (char **)calloc(old_env_len + 1, sizeof(char *));
 	new_id = ft_strdup(id);
 	if (new_env == NULL || new_id == NULL)
 		return (NULL);
@@ -53,10 +53,11 @@ static char		**export_new_env(char **env, char *id)
 		i++;
 	}
 	new_env[i] = new_id;
+	new_env[i + 1] = NULL;
 	return (new_env);
 }
 
-int			export_add_id(char *id, t_data *data)
+static int		export_add_id(char *id, t_data *data)
 {
 	int		i;
 	char	**new_env;
