@@ -12,7 +12,7 @@
 	//       si existe: montar argv[0] con cada path en la variable y comprobar si existe
 	//         existe PATH/argv[0], execve(PATH/argv[0], argv, data->env)
 	//         no existe: return error
-	//       no existe PATH: return error
+	//       no existe PATH: intenta ejecutar el comando
 	//
 	// si recibe una lista de comandos vacia, ignora la ejecucion y devuelve 0
 	// (a este punto solo se puede llegar con la expansion de una variable que resulte en una cadena vacia)
@@ -35,32 +35,53 @@ static int	slash_in_cmd(char *cmd)
 	return (0);
 }
 
-static char	**cmd_get_paths(char *path_env)
+static char	*exec_mnt_path(char *path, char *cmd)
+{
+	int		i;
+	char	*aux_path;
+
+	i = 0;
+	while (path[i])
+	{
+		if (!paths[i + 1] && !(paths[i] == '/'))
+		{
+			aux_path = path;
+			path = ft_strjoin(path, "/");
+			free(aux_path);
+			if (!path)
+				return (NULL);
+		}
+		aux_path = path;
+		path = ft_strjoin(paths[i], cmd);
+		free(aux_path);
+		return (!path ? NULL : path);
+}
+
+static char	*clean_paths(char **paths)
 {
 	int	i;
-	int	j;
-	char	*aux_path;
+
+	i = 0;
+	while (paths[i])
+	{
+		free(paths[i]);
+		i++;
+	}
+	return (NULL);
+}
+
+static char	**exec_get_paths(char *path_env, char *cmd)
+{
+	int	i;
 	char	**paths;
 
 	i = 0;
-	j = 0;
 	if ((paths = ft_split(path_env + 5, ':')) == NULL)
 		return (NULL);
 	while (paths[i])
 	{
-		while (paths[i][j])
-		{
-			if (!paths[i][j + 1] && !(paths[i][j] == '/'))
-			{
-				aux_path = paths[i];
-				paths[i] = ft_strjoin(paths[i], "/");
-				free(aux_path);
-			}
-			if (!paths[i])
-				return (NULL);
-			j++;
-		}
-		j = 0;
+		if (!(paths[i] = exec_mnt_path(paths[i], cmd)))
+			return (clean_paths(paths));
 		i++;
 	}
 	return (paths);
@@ -68,52 +89,28 @@ static char	**cmd_get_paths(char *path_env)
 
 int			exec_cmd(char **argv, t_data *data)
 {
-	char		*cmd;
-	char		**paths;
-	int		i;
 	struct stat	buff;
+	char		**paths;
+	char		*path_env;
+	int			i;
 
 	i = 0;
-	cmd = argv[0];
-	if (!cmd)
-		return (0);
-	if (!slash_in_cmd(argv[0]))
+	if (!argv[0])
+		exit (janitor(argv, data, 0));
+	path_env = search_env("PATH", data->env);
+	if (!slash_in_cmd(argv[0]) && path_env)
 	{
-		if (!(path_env = search_env(data->env, "PATH")))  /* no hay variable PATH en el entorno */
-		{
-			print_error(data->sh_name, argv[0], "No such file or directory");
-			exit(127);
-		}
-		if (!(paths = cmd_get_paths(path_env)))  /* error al asginar memoria dinamica */
-		{
-			print_error(data->sh_name, argv[0], strerror(errno));
-			exit(errno + 128);
-		}
-		if (!paths[0]) /* variable PATH vacia */
-		{
-			print_error(data->sh_name, argv[0], "No such file or directory");
-			exit(127);
-		}
+		if (!(paths = exec_get_paths(path_env, argv[0])))
+			exit(janitor(argv, data, errno));
 		while (paths[i])
 		{
-			if (!(cmd = ft_strjoin(paths[i], argv[0])))
-			{
-				print_error(data->sh_name, argv[0], strerror(errno));
-				exit(errno + 128);
-			}
-			if (!stat(cmd, &buff))
+			if (!stat(paths[i], &buff))
 				break;
 			i++;
-			free(cmd);
 		}
-		if (paths[i] == NULL)
-		{
-			print_error(data->sh_name, argv[0], "No such file or directory");
-			exit(127);
-		} 
+		if (!paths[i])
+			exit(janitor(argv, data, 127));
 	}
 	execve(cmd, argv, data->env);
-	print_error(data->sh_name, cmd, strerror(errno));  /* llega al fin de la funcion si execve devuelve -1 */
-	/* func cerrar fds, free argv */
-	exit(errno + 128);
+	exit(janitor(argv, data, errno));
 }
