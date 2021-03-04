@@ -1,10 +1,4 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include "libft.h"
-#include <sys/stat.h>
+#include "minishell.h"
 
 	// del input tenemos que recoger los comandos validos (cualquier word que no sea una redireccion)
 	// guardamos comandos en argv, argv[0] es el comando a ejecutar, el resto son los argumentos del comando
@@ -27,18 +21,6 @@
 
 	// faltan las redirecciones de stdin, stdout, stderr si las hubieran
 
-typedef struct s_data {
-	char **env;
-	char *sh_name;
-}				t_data;
-char	*search_env(char **env, char *name);
-
-int	print_error(char *sh, char *cmd, char *err)
-{
-	printf("%s: %s: %s\n", sh, cmd, err);
-	return (345);
-}
-
 static int	slash_in_cmd(char *cmd)
 {
 	int	i;
@@ -55,32 +37,41 @@ static int	slash_in_cmd(char *cmd)
 
 static char	**cmd_get_paths(char *path_env)
 {
-	int		i;
-	int		paths_count;
+	int	i;
+	int	j;
+	char	*aux_path;
 	char	**paths;
 
 	i = 0;
-	paths_count = 0;
-	while (path_env[i])
-	{
-		if (path_env[i] == ':')
-			paths_count++;
-		i++;
-	}
+	j = 0;
 	if ((paths = ft_split(path_env + 5, ':')) == NULL)
 		return (NULL);
+	while (paths[i])
+	{
+		while (paths[i][j])
+		{
+			if (!paths[i][j + 1] && !(paths[i][j] == '/'))
+			{
+				aux_path = paths[i];
+				paths[i] = ft_strjoin(paths[i], "/");
+				free(aux_path);
+			}
+			if (!paths[i])
+				return (NULL);
+			j++;
+		}
+		j = 0;
+		i++;
+	}
 	return (paths);
 }
 
 int			exec_cmd(char **argv, t_data *data)
 {
-	char	*cmd;
-	char	*path_env;
-	char	**paths;
-	char	*full_path;
+	char		*cmd;
+	char		**paths;
 	int		i;
-	int		stat_out;
-	struct stat buff;
+	struct stat	buff;
 
 	i = 0;
 	cmd = argv[0];
@@ -105,20 +96,15 @@ int			exec_cmd(char **argv, t_data *data)
 		}
 		while (paths[i])
 		{
-			if (!(full_path = ft_strjoin(paths[i], "/")))
+			if (!(cmd = ft_strjoin(paths[i], argv[0])))
 			{
 				print_error(data->sh_name, argv[0], strerror(errno));
 				exit(errno + 128);
 			}
-			if (!(cmd = ft_strjoin(full_path, argv[0])))
-			{
-				print_error(data->sh_name, argv[0], strerror(errno));
-				exit(errno + 128);
-			}
-			free(full_path);
-			if ((stat_out = stat(cmd, &buff)) == 0)
+			if (!stat(cmd, &buff))
 				break;
 			i++;
+			free(cmd);
 		}
 		if (paths[i] == NULL)
 		{
@@ -129,6 +115,5 @@ int			exec_cmd(char **argv, t_data *data)
 	execve(cmd, argv, data->env);
 	print_error(data->sh_name, cmd, strerror(errno));  /* llega al fin de la funcion si execve devuelve -1 */
 	/* func cerrar fds, free argv */
-	printf("hola\n");
 	exit(errno + 128);
 }
