@@ -1,21 +1,16 @@
 #include "test.h"
 
-int	parser_out(char *new_input)
-{
-	printf("-------\n\n%s\n\n-------\n", new_input);
-	return (1);
-}
-
-int	parser_in(char *input, t_data *data)
+int	parser(t_data *data)
 {
 	int	i = 0;
 
-	while (input[i])
+	while (data->input[i])
 	{
-		if (input[i] == '$')
-			parser_variable(input, i, data);
+		if (data->input[i] == '$')
+			parser_variable(data->input, i, data);
 		i++;
 	}
+	printf("%s\n", data->input);
 	return (1);
 }
 
@@ -30,7 +25,8 @@ int	main(int argc, char **argv, char **envp)
 		write(1, ">- ", 3);
 		bzero(buff, 1000);
 		read(0, buff, 1000);
-		parser_in(buff, &data);	
+		data.input = ft_strdup(buff);
+		parser(&data);	
 	}
 	return (0);
 }

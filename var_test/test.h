@@ -10,6 +10,7 @@
 typedef struct	s_data 
 {
 	char		**env;
+	char		*input;
 }				t_data;
 
 int		is_var(char input);
