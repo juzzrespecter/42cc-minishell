@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/06 17:46:15 by danrodri          #+#    #+#             */
-/*   Updated: 2021/02/22 17:30:46 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/05 16:31:24 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ t_list			*ft_lstmap(t_list *lst, void *(*f)(void *),\
 void			ft_putchar(char c);
 void			ft_putstr(char *str);
 char			*ft_lltoa_base(long long int i, char *base);
+char			**ft_split_str(char *s, char *sep);
 int				get_next_line(int fd, char **line);
 
 #endif

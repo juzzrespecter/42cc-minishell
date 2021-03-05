@@ -1,62 +1,84 @@
 #include "minishell.h"
 
-static int	is_var(char input)
+static char	*copy_variable(char *input, int var_len, char **env)
 {
-	if (ft_isalnum(input) || input == '_')
-		return (1);
-	return (0);
+	char *var_on_input;
+	char *var_on_env;
+
+	if (!(var_on_input = (char *)malloc(sizeof(char) * (var_len + 1))))
+		return (NULL);
+	ft_strlcpy(var_on_input, input, var_len + 1);
+	var_on_env = search_env(var_on_input);
+	free(var_on_input);
+	if (!var_on_env)
+		var_on_env = ft_strdup("");
+	else
+		var_on_env += var_len + 1;
+	return (var_on_env);
 }
 
-int	parser_variable(char *input, int var_pos, t_data *data)
+static char	*clear_var_table(char **var_table)
 {
-	int		i;
-	int		var_len;
-	char	*var_name;
-	char	*env_var;
-	char	**env_var_expanded;
-	char	*input_prev;
-	char 	*input_post;
-	char	*aux_input;
-	char	*new_input;
+	int	i;
 
-	i = 1;
-	var_len = 0;
-	if (is_blank(input[var_pos + i]) || is_op_ctrl(input[var_pos + i]))
-		parser(input);		/* $ no es un marcador de expansion de var */
-	while (is_var(input[var_pos + i]))
+	i = 0;
+	while (var_table[i])
 	{
-		var_len++;
+		free(var_table[i]);
 		i++;
 	}
-	var_name = (char *)malloc(sizeof(char) * (var_len + 1));
-	ft_strncpy(var_name, input + i, var_len + 1);
-	input_prev = (char *)malloc(sizeof(char) * i);
-	ft_strncpy(input_prev, input, i);
-	input_post = ft_strdup(input + var_len);
-	env_var = search_env(var_name, data->env);
-	free(input);
-	if (!env_var)
+	return (NULL);
+}
+
+static char	*expand_variable(char *input, char *var, int var_len)
+{
+	int		i;
+	char	*new_input;
+	char	*aux_input;
+	char	**var_table;
+
+	i = 0;
+	if (!(var_table = ft_split_str(var, " \t")))
+		return (NULL);
+	if (!(new_input = ft_strdup(input)))
+		return (clear_var_table(var_table));
+	while (var_table[i])
 	{
-		env_var = ft_strdup("");
-		aux_input = prev_input;
-		prev_input = ft_strjoin(prev_input, env_var);
+		aux_input = new_input;
+		new_input = ft_strjoin(new_input, var_table[i]);
 		free(aux_input);
+		if (!new_input)
+			return (clear_var_table(var_table));
+		i++;
 	}
+	clear_var_table(var_table);
+	aux_input = new_input;
+	new_input = ft_strjoin(new_input, input + var_len);
+	free(aux_input);
+	return (new_input);
+}
+
+int			parser_variable(char *input, int var_pos, t_data *data)
+{
+	int		var_len;
+	char	*var;
+	char	*new_input;
+
+	var_pos++;
+	var_len = 0;
+	if (is_blank(input[var_pos + i]) || is_op_ctrl(input[var_pos + i]))
+		return (0);
+	while (is_var(input[var_pos + var_len]))
+		var_len++;
+	if (!(var = copy_variable(input + var_pos, var_len, data->env)))
+		return (-1);
+	input[var_pos--] = 0;
+	if (!var[0])
+		new_input = ft_strjoin(input, "");
 	else
-	{
-		i = 0;
-		env_var += var_name;
-		env_var_expanded = ft_split_str(env_var, " \t");
-		while (env_var_expanded[i])
-		{
-			aux_input = input_prev;
-			input_prev = ft_strjoin(input_prev, env_var_expanded[i]);
-			free(aux_input);
-			i++;
-		}
-	}
-	new_input = ft_strjoin(prev_input, post_input);
-	free(prev_input);
-	free(post_input);
-	parser(new_input, data);
+		new_input = expand_variable(input, var);
+	free(var);
+	if (!new_input)
+		return (-1);
+	return (1);
 }

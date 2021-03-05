@@ -1,6 +1,4 @@
-#include "minishell.h"
-
-/* quote_ctrl[0] == single quotes, quote_ctrl[1] == double */
+#include "test.h"
 
 int	is_quote(char input, int quote_ctrl[2])
 {
@@ -50,7 +48,7 @@ int	is_blank(char input)
 
 int	is_ctrl_op(char input)
 {
-	if (!ft_strrchr(";|", input))
+	if (!ft_strrchr(";|\n", input))
 		return (0);
 	return (1);
 }

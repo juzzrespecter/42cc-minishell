@@ -1,76 +1,84 @@
-#include <unistd.h>
-#include <stdio.h>
-#include "libft.h"
+#include "test.h"
 
-int	parser(char *new_input)
+static char	*copy_variable(char *input, int var_len, char **env)
 {
-	printf("%s\n", new_input);
-	return (0);
+	char *var_on_input;
+	char *var_on_env;
+
+	if (!(var_on_input = (char *)malloc(sizeof(char) * (var_len + 1))))
+		return (NULL);
+	ft_strlcpy(var_on_input, input, var_len + 1);
+	var_on_env = search_env(var_on_input);
+	free(var_on_input);
+	if (!var_on_env)
+		var_on_env = ft_strdup("");
+	else
+		var_on_env += var_len + 1;
+	return (var_on_env);
 }
 
-int	parser_variable(char *input, int var_pos, t_data *data)
+static char	*clear_var_table(char **var_table)
 {
-	int		i;
-	int		var_len;
-	char	*var_name;
-	char	*env_var;
-	char	**env_var_expanded;
-	char	*prev_input;
-	char 	*post_input;
-	char	*aux_input;
-	char	*new_input;
+	int	i;
 
-	i = 1;
-	var_len = 0;
-	if (is_blank(input[var_pos + i]) || is_op_ctrl(input[var_pos + i]))
-		parser(input);		/* $ no es un marcador de expansion de var */
-	while (is_word(input[var_pos + i]))
+	i = 0;
+	while (var_table[i])
 	{
-		var_len++;
+		free(var_table[i]);
 		i++;
 	}
-	var_name = (char *)malloc(sizeof(char) * (var_len + 1));
-	ft_strlcpy(var_name, input + i, var_len + 1);
-	prev_input = (char *)malloc(sizeof(char) * i);
-	ft_strlcpy(prev_input, input, i);
-	post_input = ft_strdup(input + var_len);
-	env_var = search_env(var_name, data->env);
-	free(input);
-	if (!env_var)
-	{
-		env_var = ft_strdup("");
-		aux_input = prev_input;
-		prev_input = ft_strjoin(prev_input, env_var);
-		free(aux_input);
-	}
-	else
-	{
-		i = 0;
-		env_var += var_name;
-		env_var_expanded = ft_split_str(env_var, " \t");
-		while (env_var_expanded[i])
-		{
-			aux_input = prev_input;
-			prev_input = ft_strjoin(prev_input, env_var_expanded[i]);
-			free(aux_input);
-			i++;
-		}
-	}
-	new_input = ft_strjoin(prev_input, post_input);
-	free(prev_input);
-	free(post_input);
-	parser(new_input, data);
+	return (NULL);
 }
 
-int	main(int argc, char **argv, char **envp)
+static char	*expand_variable(char *input, char *var, int var_len)
 {
-	char	buffer[1000];
+	int		i;
+	char	*new_input;
+	char	*aux_input;
+	char	**var_table;
 
-	while (1)
+	i = 0;
+	if (!(var_table = ft_split_str(var, " \t")))
+		return (NULL);
+	if (!(new_input = ft_strdup(input)))
+		return (clear_var_table(var_table));
+	while (var_table[i])
 	{
-		bzero(buffer, 1000);
-		read (0, buffer, 1000);
-		parser_variable(buffer, envp);	
+		aux_input = new_input;
+		new_input = ft_strjoin(new_input, var_table[i]);
+		free(aux_input);
+		if (!new_input)
+			return (clear_var_table(var_table));
+		i++;
 	}
-	return (0);
+	clear_var_table(var_table);
+	aux_input = new_input;
+	new_input = ft_strjoin(new_input, input + var_len);
+	free(aux_input);
+	return (new_input);
+}
+
+int			parser_variable(char *input, int var_pos, t_data *data)
+{
+	int		var_len;
+	char	*var;
+	char	*new_input;
+
+	var_pos++;
+	var_len = 0;
+	if (is_blank(input[var_pos + i]) || is_op_ctrl(input[var_pos + i]))
+		return (0);
+	while (is_var(input[var_pos + var_len]))
+		var_len++;
+	if (!(var = copy_variable(input + var_pos, var_len, data->env)))
+		return (-1);
+	input[var_pos--] = 0;
+	if (!var[0])
+		new_input = ft_strjoin(input, "");
+	else
+		new_input = expand_variable(input, var);
+	free(var);
+	if (!new_input)
+		return (-1);
+	return (1);
 }
