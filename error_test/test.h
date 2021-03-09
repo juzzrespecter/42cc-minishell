@@ -14,8 +14,8 @@ typedef struct	s_data
 
 int	is_ctrl_op(char *input);
 int	is_blank(char input);
-int	is_quote(char input, int quote_ctrl[2]);
+int	is_quote(char input, int quotes);
 int	parser_error(char *input, t_data *data);
-int	is_word(char *input);
+int	is_word(char *input, int flags[3]);
 
 #endif
