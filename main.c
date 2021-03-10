@@ -34,7 +34,7 @@ int	main(int argc, char **argv, char **envp)
 		free(g_input);
 		sig_init();
 		ft_putstr_fd("DANFER_minishell> ", 2);
-		ret = get_next_line(0, &data->input);
+		ret = get_next_line(0, &g_input);
 		if (!ret)
 			free_data(&data, g_input);
 		else
