@@ -1,17 +1,18 @@
-#include "minishell.h"
+#include "test.h"
 # define PREV_TOKEN 0
 # define WORD 1 
 # define CTRL 2
 # define REDIR 3
 
-// condiciones de error para words:
-// 		word es a la vez used_as_fd && used_as_filepath
-// 			used_as_fd 			== is_digit && next_char == redir
-//			used_as_filepath 	== is_word && prev_token == redir
-
-//	flags
-//		flags[0] == prev_token:		{ 0: word, 1: ctrl, 2: redir }
-//		flags[1] == is_quoted:		{ 0: no, 1: single_quotes, 2: double_quotes, 3: escaped }
+/* condiciones de error para words:
+ *      word es a la vez used_as_fd && used_as_filepath
+ * 	        used_as_fd 			== is_digit && next_char == redir
+ *          used_as_filepath 	== is_word && prev_token == redir
+ *
+ * flags
+ *      flags[0] == prev_token:		{ 0: word, 1: ctrl, 2: redir }
+ *      flags[1] == is_quoted:		{ 0: no, 1: single_quotes, 2: double_quotes, 3: escaped }
+ */
 
 static int	is_fd(char *input)
 {
@@ -27,30 +28,52 @@ static int	is_fd(char *input)
 	return (i);
 }
 
-static int	word_syntax_err(char metachr, char *input, int prev_token)
+static int	parser_word(char *input, int token_len, int flags[2], t_data *data)
 {
 	int	next_char;
 	int	fd_true;
 
-	next_char = 1 * (metachr == '>' || metachr == '<');
+	next_char = 1 * (input[token_len] == '>' || input[token_len] == '<');
 	fd_true = is_fd(input);
-	return ((next_char && fd_true && (prev_token == REDIR)));
+	if ((next_char && fd_true && (flags[PREV_TOKEN] == REDIR)))
+	{
+		data->err = ft_substr(input, 0, token_len);
+		return (0);
+	}
+	flags[PREV_TOKEN] = WORD;
+	return (1);
 }
 
-static int	ctrl_syntax_err(char token, int prev_token)
+static int	parser_ctrl(char *input, int token_len, int flags[2], t_data *data)
 {
-	if ((token == '>' || token == '<') && prev_token == REDIR)
-		return (1);
-	if (prev_token != WORD)
-		return (1);
-	return (0);
+	int	token;
+
+	token = CTRL;
+	if (input[0] == '>' || input[0] == '<')
+		token = REDIR;
+	if ((token == REDIR && flags[PREV_TOKEN] == REDIR) \
+			|| (token == CTRL && flags[PREV_TOKEN] != WORD))
+	{
+		data->err = ft_substr(input, 0, token_len);
+		return (0);
+	}
+	flags[PREV_TOKEN] = token;
+	return (1);
 }
 
-static int	set_err_token(char *input, int i, int token_len, t_data *data)
-{
-	data->err = ft_substr(input, i, token_len);
-	return (258);
-}
+/* parser error: recibe el input y comprueba posibles errores de sintaxis. 
+ * devuelve (0) en caso de exito y (258) (codigo de error) en caso de encontrar un error.
+ *   
+ *   parser_word(); controla posibles errores en un token WORD
+ *   en caso de que el shell pueda interpretar el mismo token como un descriptor de fichero
+ *   en una redireccion y un path a un fichero en otra redireccion ( p. ej: > 1> /path/to/file.txt )
+ *   retorna (0) como error.
+ *
+ *   parser_ctrl(); controla errores en un token CTRL ( operador de control, { ;, <, >, >>, <newline>, | } )
+ *   en caso de que encuentre una redireccion (REDIR) sin un WORD que interprete como fichero, o un token
+ *   de control de comandos ( ; y | ) precedidos de un comando vacio ( sin argumentos ni redirecciones), 
+ *   retorna (0) como error.
+ */
 
 int			parser_error(char *input, t_data *data)
 {
@@ -64,18 +87,14 @@ int			parser_error(char *input, t_data *data)
 	{
 		if ((token_len = is_word(input + i, flags)))
 		{
-			if (word_syntax_err(input[i + token_len], input + i, flags[PREV_TOKEN]))
-				return (set_err_token(input, i, token_len, data));
-			flags[PREV_TOKEN] = WORD;
+			if (!(parser_word(input + i, token_len, flags, data)))
+				return (258);
 			i += token_len;
 		}
 		if ((token_len = is_ctrl_op(input + i)))
 		{
-			if (ctrl_syntax_err(input[i], flags[PREV_TOKEN]))
-				return (set_err_token(input, i, token_len, data));
-			flags[PREV_TOKEN] = CTRL;
-			if (input[i] == '>' || input[i] == '<')
-				flags[PREV_TOKEN] = REDIR;
+			if (!(parser_ctrl(input + i, token_len, flags, data)))
+				return (258);
 			i += token_len;
 		}
 		i += is_blank(input[i]);

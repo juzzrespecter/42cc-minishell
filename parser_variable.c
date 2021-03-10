@@ -13,7 +13,7 @@ static char	*copy_variable(char *input, int var_len, char **env)
 	if (!var_on_env)
 		var_on_env = ft_strdup("");
 	else
-		var_on_env += var_len + 1;
+		var_on_env = ft_strdup(var_len + 1);
 	return (var_on_env);
 }
 
@@ -54,6 +54,19 @@ static int	expand_exit_status(char input,int var_pos, int exit_status)
 	return (!new_input ? -1 : 1);
 }
 
+/* parser_variable: recibe la cadena y la posicion de la posible variable a expandir.
+ * devuelve (1) con exito, (-1) con fallo de asignacion de memoria.
+ *    trabaja cuatro casos: con $?, expande la variable con el valor del codigo de salida almacenado en data->exit_code,
+ *    con un nombre de variable no valido, retorna (1) sin editar la cadena, con $VAR definida en el entorno, expande la
+ *    variable, y con $VAR sin definir, la sustituye por una cadena vacia.
+ *
+ *    expand_exit_status(); sustituye la variable $? por el codigo de salida del ultimo comando ejecutado.
+ *    copy_variable(); se encarga de buscar coincidencias entre la variable en input y las variables del entorno,
+ *       devuelve NULL en caso de error, la cadena con la variable en caso de exito.
+ *    expand_variable(); sustituye la variable obtenida en copy_variable en la cadena input.
+ *       devuelve la nueva cadena con la variable expandida en caso de exito, NULL en caso de error.
+ */
+
 int			parser_variable(char *input, int var_pos, t_data *data)
 {
 	int		var_pos;
@@ -64,12 +77,13 @@ int			parser_variable(char *input, int var_pos, t_data *data)
 	if (input[i] == '?')
 		return (expand_exit_status(input, var_pos, data->exit_status);
 	if (!is_var(input[i]))
-		return (0);
+		return (1);
 	var_len = is_var(input[var_pos + var_len]);
 	if (!(var = copy_variable(input + var_pos, var_len, data->env)))
 		return (-1);
 	input[var_pos - 1] = 0;
 	new_input = expand_variable(input, var, var_len + var_pos);
+	free(var);
 	if (!new_input)
 		return (-1);
 	free(data->input);
