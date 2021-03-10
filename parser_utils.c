@@ -1,30 +1,18 @@
 #include "minishell.h"
 
-/* quote_ctrl[0] == single quotes, quote_ctrl[1] == double */
+//	quote status
+//		0	no quotes
+//		1	single quotes
+//		2	double quotes
+//		3	escaped
 
-int	is_quote(char input, int quote_ctrl[2])
+int	is_quote(char input, int quote)
 {
-	if (input == '\'')
-	{
-		if (quote_ctrl[1] == 1)
-			return (0);
-		if (quote_ctrl[0] == 1)
-			quote_ctrl[0] = 0;
-		else
-			quote_ctrl[0] = 1;
-		return (1);
-	}
 	if (input == '\"')
-	{
-		if (quote_ctrl[0] == 1)
-			return (0);
-		if (quote_ctrl[1] == 1)
-			quote_ctrl[1] = 0;
-		else
-			quote_ctrl[1] = 1;
-		return (1);
-	}
-	return (0);
+		return (quote * (quote != 2) + 2 * (quote == 0));
+	if (input == '\\')
+		return (quote * (quote != 3) + 3 * (quote == 0));
+	return (quote * (quote != 3) + 3 * (quote == 3 && input == '\\'));
 }
 
 int	is_var(char *input)
@@ -37,13 +25,16 @@ int	is_var(char *input)
 	return (i);
 }
 
-int	is_word(char *input)
+int	is_word(char *input, int flags[2])
 {
 	int	i;
 
 	i = 0;
-	while (!ft_strrchr(";|\n\t\v\r<> ", input[i]) && input[i])
-		i++;;
+	while ((!ft_strrchr(";|\n\t\v\r<> ", input[i]) || flags[1] != 0) && input[i])
+	{
+		flags[1] = is_quote(input[i], flags[1]);
+		i++;
+	}
 	return (i);
 }
 
