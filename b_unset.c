@@ -47,7 +47,7 @@ static int	unset_id_in_env(char *id, char **env)                       /* busca 
 	return (1); 
 }
 
-int			b_unset(t_cmd *cmd, t_data *data)
+int			b_unset(char **argv, t_data *data)
 {
 	int		i;
 	int		err_status;                                                 /* como en export, se guarda si ha habido un    */
@@ -55,20 +55,20 @@ int			b_unset(t_cmd *cmd, t_data *data)
 
 	i = 0;
 	err_status = 0;
-	while (cmd->argv[i + 1])
+	while (argv[i + 1])
 	{
-		if (env_parse_id(cmd->argv[i + 1]) == 0)						/* nombre de las variables solo permiten [A-Za-z0-9_]                   */
+		if (env_parse_id(argv[i + 1]) == 0)						/* nombre de las variables solo permiten [A-Za-z0-9_]                   */
 		{
-			if (unset_id_in_env(cmd->argv[i + 1], data->env) == 0)		/* busca coincidencia entre el argumento y el nombre de alguna variable */
+			if (unset_id_in_env(argv[i + 1], data->env) == 0)		/* busca coincidencia entre el argumento y el nombre de alguna variable */
 			{
-				if ((new_env = unset_rm_id(cmd->argv[i + 1], data->env)) == NULL)	/* copia la lista de variables sin la coincidente            */
+				if ((new_env = unset_rm_id(argv[i + 1], data->env)) == NULL)	/* copia la lista de variables sin la coincidente            */
 					return (errno + 128);                                           /* exit status: 128 + err signal                             */
 				free_env(data->env);
 				data->env = new_env;
 			}
 		}
 		else
-			err_status = print_error(cmd->argv[0], \
+			err_status = print_error(argv[0], \
 					"not a valid identifier", cmd->fd_err);
 		i++;
 	}
