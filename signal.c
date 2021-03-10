@@ -5,11 +5,11 @@ void	handle_sig(int sig)
 	if (sig == SIGINT)		//si recibimos señal salida Ctrl-C
 	{
 		data->status = 130;	//Bash exit code status es 130 para salida con Ctrl-C
-		if (data->input)
-			ft_putstr_fd("\nminishell> ", 2);
-		if (data->input)
-			free(data->input);
-		data->input = ft_strdup("\0");
+		if (g_input)
+			ft_putstr_fd("\nDANFER_minishell> ", 2);
+		if (g_input)
+			free(g_input);
+		g_input = ft_strdup("\0");
 	}
 	else if (sig == SIGQUIT)	//si recibimos señal de salida de teclado Ctrl-\//
 		write(2, "\b\b  \b\b", 6);

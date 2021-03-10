@@ -1,5 +1,5 @@
 
-SRCS	= main.c env.c signal.c parser.c pwd.c exit.c pipe.c
+SRCS	= main.c env.c signal.c pwd.c exit.c pipe.c parser.c parser2.c input_split.c parser_redir.c parser_redir2.c
 
 OBJS	= $(SRCS:.c=.o)
 

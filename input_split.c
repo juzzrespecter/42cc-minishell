@@ -2,6 +2,9 @@
 
 char	*find_next_input(char *str)
 {
+	char	quote;
+	int	slash_count;
+
 	str--;
 	while (*(++str))
 	{
@@ -9,12 +12,48 @@ char	*find_next_input(char *str)
 		{
 			quote = *(str++);
 			while (*str != quote)
+			{
+				slash_count = 0;
+				while (*str == '\\' && quote == '"' && ++slash_count)
+					str++;
+				if (slash_count && !(slash_count % 2))
+					str--;
 				str++;
+			}
 		}
 		if (*str == ' ')
 			return (str + 1);
 	}
 	return (str);
+}
+
+void	copy_newsplit(char *src, char *dst, char quote)
+{
+	while (*src != ' ' && *src)
+	{
+		if (*src == '\'')
+		{
+			quote = *(src++);
+			while (*src != quote)
+				*(dst++) = *(src++);
+			src++;
+		}
+		else if (*src == '"')
+		{
+			quote = *(src++);
+			while (*src != quote)
+			{
+				if (*src == '\\' && (*(src + 1) == quote ||
+					*(src + 1) == '\\' || *(src + 1) == '$'))
+					src++;
+				*(dst++) = *(src++);
+			}
+			src++;
+		}
+		else
+			*(dst++) = *(src++);
+	}
+	*dst = '\0';
 }
 
 char	*newsplit(char *src)
@@ -28,19 +67,7 @@ char	*newsplit(char *src)
 	dst = malloc((len + 1) * sizeof(char));
 	if (!dst)
 		exit(EXIT_FAILURE);
-	while (*src != ' ' && *src)
-	{
-		if (*str == '"' || *str == '\'')
-		{
-			quote = *(src++);
-			while (*src != quote)
-				*(dst++) = *(src++);
-			src++;
-		}
-		else
-			*(dst++) = *(src++);
-	}
-	*dst = '\0';
+	copy_newsplit(src, dst, quote);		//copia dentro de newsplit
 	return (dst);
 }
 
@@ -58,7 +85,14 @@ size_t	stringcount(char *str)
 		{
 			quote = *(str++);
 			while (*str != quote)
+			{
+				slash_count = 0;
+				while (*str == '\\' && quote == '"' && ++slash_count)
+					str++;
+				if (slash_count && !(slash_count % 2))
+					str--;
 				str++;
+			}
 		}
 		if (*str == ' ')
 			i++;

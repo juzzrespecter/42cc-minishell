@@ -62,5 +62,6 @@ void	b_env(char **env)
 		}
 		i++;
 	}
+	d->status = 0;
 }
 

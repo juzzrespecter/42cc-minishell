@@ -7,8 +7,8 @@ void	parent(char *input2, t_data *data, int pid, int *fds)
 
 	if (waitpid(pid, &status, 0) != pid) //espera por la finalización del hijo y devuelve su pid como confirmación tras sesgarlo
 		exit(EXIT_FAILURE);	     // si no es así salimos y lanzamos error
-	free(data->input);
-	data->input = NULL;
+	free(g_input);
+	g_input = NULL;
 	oldfd = dup(0);		//hacemos copia del fd de lectura (stdin)
 	dup2(fds[0], 0);	//en vez de leer del stdin(0) hacemos que lea del fds[0]
 	close(fds[0]);
@@ -32,7 +32,7 @@ int	b_pipe(char *input1, char *input2, t_data *data)
 		dup2(fds[1], 1);		//en vez de escribir en stdout(1) hacemos que escriba en fds[1]
 		close(fds[0]);
 		close(fds[1]);
-		parser(input1, data);		//ejecutamos input1
+		parsercore(input1, data, 1);		//ejecutamos input1
 	}
 	else if (pid < 0)			//-1 error al creal el fork
 		exit(EXIT_FAILURE);
