@@ -1,27 +1,11 @@
 
-SRCS	= main.c \
-		  env.c \
-		  signal.c \
-		  pwd.c \
-		  exit.c \
-		  pipe.c \
-		  parser.c \
-		  parser2.c \
-		  input_split.c \
-		  parser_redir.c \
-		  parser_redir2.c \
-		  b_cd.c \
-		  b_echo.c \
-		  b_export.c \
-		  b_unset.c \
-		  env_edit_utils.c \
-		  exec_cmd.c \
-		  janitor.c \
-		  parser_error.c \
-		  parser_utils.c \
-		  parser_variable.c \
-		  print_error.c \
-		  search_env.c
+SRCS	= main.c parser.c parser2.c parsercore.c parser_utils.c
+
+SRCS	+= input_split.c parser_redir.c parser_redir2.c  
+
+SRCS	+= pwd.c env.c pipe.c signal.c exit.c
+
+LIBFT	= libft/libft.a
 
 OBJS	= $(SRCS:.c=.o)
 
@@ -58,4 +42,3 @@ re: fclean all
 
 %.o: %.c
 	$(CLANG) $(FLAGS) -c $<  -o $(<:.c=.o)
-

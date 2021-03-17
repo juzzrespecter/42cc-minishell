@@ -6,13 +6,13 @@ void	free_env(char **env)
 	int	env_len;
 
 	i = 0;
-	env_len = env_len(env);
+	env_len = envlen(env);
 	while (i < env_len)
 		free(env[i++]);
 	free(env);
 }
 
-int	env_len(char **env)
+int		envlen(char **env)
 {
 	int	i;
 
@@ -28,7 +28,7 @@ char	**copy_env(char **env)
 	int		i;
 
 	i = 0;
-	data_env = malloc(sizeof(char *) * env_len(env));
+	data_env = malloc(sizeof(char *) * envlen(env));
 	if (!data_env)
 		exit(EXIT_FAILURE);
 	while (env[i])
@@ -62,6 +62,5 @@ void	b_env(char **env)
 		}
 		i++;
 	}
-	d->status = 0;
+	g_status = 0;
 }
-

@@ -1,121 +1,108 @@
-#include "../minishell.h"
+#include "minishell.h"
 
-int	parsercore(char *input, t_data *data, int piped)
+void			copy_inside_quotes(char **src, char **dst, char quote)
 {
-	char	*clean_input;	
-	char	**inputs;
-	int	oldfd[2];
-	
-	if (parser_error(input))			//chequeamos errores sintaxis 			****TO DO****
-	{
-		free(input);
-		return (0);
-	}
-	oldfd[0] = dup(1);				//copia de stdout en oldfd[0]
-	oldfd[1] = dup(0);				//copia de stdin en oldfd[1]
-	clean_input = input_cleaner(input);		//limpiamos input				****TO DO****
-	parser_redir(&input, data);			//gestionamos redireccionamientos		
-	inputs = input_split(clean_input);		//dividimos input		 
-	free(clean_input);
-	select_cmd(inputs, data);			//seleccionamos comando a ejecutar
-	free_inputs(inputs);
-	dup2(oldfd[0], 1);				//en vez de escribir en stdout(1) hacemos que escriba en oldfd[0]			
-	dup2(oldfd[1], 0);				//en vez de leer de stdin(0) hacemos que lea de oldfd[1]
-	close_fds(data);
-	close(oldfd[0]);
-	close(oldfd[1]);
-	if (piped)
-	{
-		free_inputs(data->env);
-		if (g_input)
-			free(g_input);
-		free(data->pwd);
-		exit(EXIT_SUCCESS);
-	}
-	return (0);
-}
-
-int	parser_semicolon(char *input, int semicolon_pos, t_data *data)
-{
-	char	*new_input;
-	int	space;
-
-	space = 0;
-	if (input[semi_pos - 1] == ' ')
-		space = 1;
-	new_input = ft_strdup(&input[semicolon_pos + 1]);
-	input[semicolon_pos - space] = '\0';
-	parsercore(input, data);
-	if (d->status != 130)
-		return (parser(new_input, data));
-	else
-		free(new_input);
-	return (0);
-}
-
-int	parser_pipe(char *input, int pipe_pos, t_data *data)
-{
-	char	*new_input;
-	int	space;
-
-	space = 0;
-	if (input[pipe_pos - 1] == ' ')
-		space = 1;
-	new_input = ft_strdup(&input[pipe_pos + 1]);
-	input[pipe_pos - space] = '\0';
-	return (b_pipe(input, new_input, data));
-}
-
-int	check_special(char **input, int *i, t_data *data)
-{
-	if ((*input)[*i] == '\'')
-	{
-		(*i)++;
-		while ((*input)[*i] != '\'')
-			(*i)++;
-	}
-	else if ((*input)[*i] == '|')
-	{
-		parser_pipe((*input), *i, data);	//divive input en los dos inputs que necesita el pipe, con lo que hay delante y detrás del pipe
-		return (1);
-	}
-	else if ((*input)[*i] == ';')
-	{
-		parser_semicolon((*input), *i, data);	//coge hasta el primer ";" y lo manda al parsercore.
-		return (1);				//y crea un nuevo input para el resto y lo manda de nuevo a aquí a analizar
-	}
-	else if ((*input)[*i] == '$')
-		parser_variable(input, i, data);	
-	(*i)++;
-	return (0);
-}
-
-int	parser(char *input, t_data *data)
-{
-	int i;
 	int slash_count;
 
-	int = 0;
-	g_input = NULL;
-	while (input[i])
+	while (**src != quote)
 	{
-		if (input[i] == '"')
+		slash_count = 0;
+		while (**src == '\\' && quote == '"')
 		{
-			i++;
-			while (input[i] != '"')
-			{
-				slash_count = 0;
-				while (input[i] == '\\' && ++i)
-					slash_count++;
-				if (input[i] == '$' && !(slash_count % 2))
-					parser_variable(&input, &i, data);
-				if (slash_count && !(slash_count % 2))
-					i--;
-				i++;
-			}
+			*((*dst)++) = *((*src)++);
+			slash_count++;
 		}
-		if (check_special(&input, &i, data))
-			return (0);
-	]	
-	return (parsercore(input, data,0));
+		if (slash_count && !(slash_count % 2))
+			*((*dst)--) = *((*src)--);
+		*((*dst)++) = *((*src)++);
+	}
+}
+
+void			input_copy(char *dst, char *src)
+{
+	char	quote;
+
+	while (*src)
+	{
+		if (*src == ' ' && (*(src + 1) == ' ' || *(src + 1) == '\0'))
+			src++;
+		else if (*src == '"' || *src == '\'')
+		{
+			*(dst++) = *src;
+			quote = *(src++);
+			copy_inside_quotes(&src, &dst, quote);
+			*(dst++) = *(src++);
+		}
+		else if (*src == '\\' && *(src + 1))
+			escape_char(&dst, &src);
+		else
+			*(dst++) = *(src++);
+	}
+	*dst = '\0';
+}
+
+static int		input_len(char *str)
+{
+	int		i;
+	char	quote;
+
+	i = 0;
+	while (*str)
+	{
+		if (*str == ' ' && (*(str + 1) == ' ' || *(str + 1) == '\0'))
+			str++;
+		else if (*str == '\\' && (str += 2))
+			i += 4;
+		else if (*str == '"' || *str == '\'')
+		{
+			quote = *(str++);
+			quote_len(&str, &i, quote);
+			if (!*str)
+				return (-1);
+			str++;
+			i = i + 2;
+		}
+		else if (str++)
+			i++;
+	}
+	return (i);
+}
+
+char			*input_cleaner(char *str)
+{
+	int		len;
+	char	*clean_input;
+	char	*str_start;
+
+	str_start = str;
+	while (*str == ' ' && *str)
+		str++;
+	len = input_len(str);
+	if (len == -1)
+		return (0);
+	clean_input = (char *)malloc((len + 1) * sizeof(char));
+	if (!clean_input)
+		exit(EXIT_FAILURE);
+	input_copy(clean_input, str);
+	free(str_start);
+	return (clean_input);
+}
+
+int				parser_start(char *input, t_data *data)
+{
+	char	*clean_input;
+
+	clean_input = input_cleaner(input);
+	g_input = NULL;
+	if (clean_input == 0)
+	{
+		ft_putstr("This minishell does not support multiline\n");
+		return (0);
+	}
+	if (!*clean_input)
+	{
+		free(clean_input);
+		return (0);
+	}
+	return (parser(clean_input, data, 0));
 }

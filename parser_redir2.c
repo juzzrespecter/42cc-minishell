@@ -1,53 +1,79 @@
-#include "../minishell.h"
+#include "minishell.h"
 
-void	parser_redir_quotes(char *str, int *i, char quote)
+int		get_name_len(char *str)
 {
-	int slash_count;
+	int i;
 
-	while (str[*i] != quote)
+	i = 0;
+	while (str[i] != ' ' && str[i] != '|' && str[i] != ';' && str[i] != '>' &&
+			str[i] != '<' && str[i])
 	{
-		slash_count = 0;
-		while (str[*i] == '\\' && quote == '"')
+		if (str[i] == '\'')
 		{
-			slash_count++;
-			(*i)++;
+			while (str[++i] != '\'')
+				;
+			i++;
 		}
-		if (slash_count && !(slash_count % 2))
-			(*i)--;
-		(*i)++;
+		else if (str[i] == '"')
+		{
+			while (str[++i] != '"')
+			{
+				if (str[i] == '\\')
+					i++;
+			}
+			i++;
+		}
+		else
+			i++;
 	}
+	return (i);
 }
 
-void	remove_redir_input(char **input, int i, int j)
+void	redir_to(char *str, int i, char **input, t_data *data)
 {
-	char *tmp;
-	char *new_input;
+	char	*filename;
+	int		fd;
+	int		j;
 
-	tmp = ft_substr(input[0], 0, i);
-	new_input = ft_strjoin(tmp, &(input[0][j + 1]));
-	free(tmp);
-	free(*input);
-	*input = new_input;
+	j = i;
+	if (str[j + 1] == ' ')
+		j++;
+	filename = get_filename(&(str[j + 1]), &j);
+	remove_redir_input(input, i, j);
+	fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+	free(filename);
+	if (fd < 0)
+	{
+		ft_putstr_fd("Error: wrong permissions\n", 2);
+		g_status = 1;
+		data->redir = 0;
+		return ;
+	}
+	dup2(fd, 1);
+	if (data->fd_out != 1)
+		close(data->fd_out);
+	data->fd_out = fd;
+	parser_redir(input, data);
 }
 
 void	redir_to_append(char *str, int i, char **input, t_data *data)
 {
 	char	*filename;
-	int	fd;
-	int	j;
+	int		fd;
+	int		j;
 
 	j = i;
 	j++;
 	if (str[j + 1] == ' ')
 		j++;
 	filename = get_filename(&(str[j + 1]), &j);
-	remove_redir_input(input, i, j);					//substraemos lo analizado para continuar con el parser
-	fd = open(filename, O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR); //exactamente igual que redir_to pero utilizando etiqueta O_APPEND al abrir filename
+	remove_redir_input(input, i, j);
+	fd = open(filename, O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
 	free(filename);
 	if (fd < 0)
 	{
 		ft_putstr_fd("Error: wrong permissions\n", 2);
-		data->status = 1;
+		g_status = 1;
 		data->redir = 0;
 		return ;
 	}
@@ -61,26 +87,41 @@ void	redir_to_append(char *str, int i, char **input, t_data *data)
 void	redir_from(char *str, int i, char **input, t_data *data)
 {
 	char	*filename;
-	int	fd;
-	int	j;
+	int		fd;
+	int		j;
 
 	j = i;
 	if (str[j + 1] == ' ')
 		j++;
 	filename = get_filename(&(str[j + 1]), &j);
-	remove_redir_input(input, i, j);		//substraemos lo analizado para continuar con el parser
-	fd = open(filename, O_RDONLY);			//abrimos sólo en modo lectura
+	remove_redir_input(input, i, j);
+	fd = open(filename, O_RDONLY);
 	free(filename);
 	if (fd < 0)
 	{
 		ft_putstr_fd("Error: Wrong file name or wrong permissions\n", 2);
-		data->status = 1;
+		g_status = 1;
 		data->redir = 0;
 		return ;
 	}
-	dup2(fd, 0);					//en vez de leer de stdin leemos del fd
+	dup2(fd, 0);
 	if (data->fd_in != 0)
 		close(data->fd_in);
 	data->fd_in = fd;
 	parser_redir(input, data);
+}
+
+void	handle_redir(char **input, int i, t_data *data)
+{
+	char	*str;
+	int		j;
+
+	str = *input;
+	j = i;
+	if (str[i] == '>' && str[i + 1] != '>')
+		redir_to(str, i, input, data);
+	else if (str[i] == '>' && str[i + 1] == '>')
+		redir_to_append(str, i, input, data);
+	else if (str[i] == '<' && str[i + 1] != '<')
+		redir_from(str, i, input, data);
 }

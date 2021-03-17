@@ -1,50 +1,84 @@
-#include "../minishell.h"
+#include "minishell.h"
 
-void	select_cmd(char **inputs, t_data *data)
+int			parser_pipe(char *input, int pipe_pos, t_data *data)
 {
-	if (!ft_strcmp(inputs[0], "echo"))
-		b_echo(inputs);
-	else if (!ft_strcmp(inputs[0], "pwd"))
-		b_pwd(data);
-	else if (!ft_strcmp(inputs[0], "cd"))
-		b_cd(inputs, data);
-	else if (!ft_strcmp(inputs[0], "env"))
-		b_env(data->env);
-	else if (!ft_strcmp(inputs[0], "exit"))
-		b_exit(inputs, data);
-	else if (!ft_strcmp(inputs[0], "export"))
-		b_export(inputs, data);
-	else if (!ft_strcmp(inputs[0], "unset"))
-		b_unset(inputs, data);
-	else
-	{
-		exec(inputs, data);
-	}
+	char	*new_input;
+	int		space;
+
+	space = 0;
+	if (input[pipe_pos - 1] == ' ')
+		space = 1;
+	new_input = ft_strdup(&input[pipe_pos + 1]);
+	input[pipe_pos - space] = '\0';
+	return (b_pipe(input, new_input, data));
 }
 
-void	free_inputs(char **inputs)
+int			parser_semicolon(char *input, int semicolon_pos, t_data *data)
 {
-	int	i;
+	char	*new_input;
+	int		space;
+
+	space = 0;
+	if (input[semicolon_pos - 1] == ' ')
+		space = 1;
+	new_input = ft_strdup(&input[semicolon_pos + 1]);
+	input[semicolon_pos - space] = '\0';
+	parsercore(input, data, 0);
+	if (g_status != 130)
+		return (parser_start(new_input, data));
+	else
+		free(new_input);
+	return (0);
+}
+
+int			check_special(char **input, int *i, t_data *data)
+{
+	if ((*input)[*i] == '\'')
+	{
+		(*i)++;
+		while ((*input)[*i] != '\'')
+			(*i)++;
+	}
+	else if ((*input)[*i] == '|')
+	{
+		parser_pipe((*input), *i, data);
+	}
+	else if ((*input)[*i] == ';')
+	{
+		parser_semicolon((*input), *i, data);
+		return (1);
+	}
+//	else if ((*input)[*i] == '$')
+//		parser_variable(input, i, data);
+	(*i)++;
+	return (0);
+}
+
+int			parser(char *input, t_data *data, int piped)
+{
+	int		i;
+	int		slash_count;
 
 	i = 0;
-	while (inputs[i])
+	while (input[i])
 	{
-		free(inputs[i]);
-		i++;
+		if (input[i] == '"')
+		{
+			i++;
+			while (input[i] != '"')
+			{
+				slash_count = 0;
+				while (input[i] == '\\' && ++i)
+					slash_count++;
+//				if (input[i] == '$' && !(slash_count % 2))
+//					parser_variable(&input, &i, data);
+				if (slash_count && !(slash_count % 2))
+					i--;
+				i++;
+			}
+		}
+		if (check_special(&input, &i, data))
+			return (0);
 	}
-	free(inputs);
-}
-
-void	close_fds(t_data *data)
-{
-	if (data->fd_in != 0)
-	{
-		close(data->fd_in);
-		data->fd_in = 0;
-	}
-	if (data->fd_out != 1)
-	{
-		close(data->fd_out);
-		data->fd_out = 1;
-	}
+	return (parsercore(input, data, piped));
 }

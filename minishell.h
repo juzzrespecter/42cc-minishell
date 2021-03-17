@@ -8,7 +8,7 @@
 # include <errno.h>
 # include <signal.h>
 # include <dirent.h>
-# include "libft/includes/libft.h"
+# include "libft/libft.h"
 
 typedef	struct	s_data
 {
@@ -16,69 +16,60 @@ typedef	struct	s_data
 	int			fd_in;
 	int			fd_out;
 	char		*pwd;
-	char		*err;
-	int			status;
 	int			redir;
 }				t_data;
 
+int				g_status;
 char			*g_input;
 
-int		parser(char *input, t_data *data);
-int		check_special(char **input, int *i, t_data *data);
-int		parser_pipe(char *input, int pipe_pos, t_data *data);
-int		parser_semicolon(char *input, int semicolon_pos, t_data *data);
-int		parsercore(char *input, t_data *data, int piped);
-void	close_fds(t_data *data);
-void	free_inputs(char **inputs);
-void	select_cmd(char **inputs, t_data *data);
+int				envlen(char **env);
+void			free_env(char **env);
+char			**copy_env(char **env);
+void			b_env(char **env);
 
+void			sig_init(void);
+void			handle_sig(int sig);
 
-int		parser_redir(char **input, t_data *data);
-void	redir_to(char *str, int i, char **input, t_data *data);
-char	*get_filename(char *str, int *j);
-int		get_name_len(char *str);
-void	make_filename(char *src, char *dst, int i, int k);
-void	redir_from(char *str, int i, char **input, t_data *data);
-void	redir_to_append(char *str, int i, char **input, t_data *data);
-void	remove_redir_input(char **input, int i, int j);
-void	parser_redir_quotes(char *str, int *i, char quote);
+void			b_exit(char **inputs, t_data *data);
+int			is_number(char *str);
 
-char	**input_split(char *str);
-size_t	stringcount(char *str);
-char	*newsplit(char *src);
-void	copy_newsplit(char *src, char *dst, char quote);
-char	*find_next_input(char *str);
+void			b_pwd(t_data *data);
 
-void	sig_init(void);
-void	handle_sig(int sig);
+int				b_pipe(char *input1, char *input2, t_data *data);
+void			parent(char *input2, t_data *data, int pid, int *fds);
 
-void	b_env(char **env);
-char	**copy_env(char **env);
-void	free_env(char **env);
-int		env_len(char **env);
+int				parser_start(char *input, t_data *data);
+char			*input_cleaner(char *str);
+void			input_copy(char *dst, char *src);
+void			copy_inside_quotes(char **src, char **dst, char quote);
+void			escape_char(char **dst, char **src);
+void			quote_len(char **str, int *i, char quote);
 
-void	b_pwd(t_data *data);
+int				parser(char *input, t_data *data, int piped);
+int			check_special(char **input, int *i, t_data *data);
+int			parser_semicolon(char *input, int semi_pos, t_data *data);
+int			parser_pipe(char *input, int pipe_pos, t_data *data);
 
-void	b_exit(char **inputs, t_data *data);
-int		is_number(char *str);
+int				parsercore(char *clean_input, t_data *data, int piped);
+void			exit_pipe(t_data *data);
+void			close_fds(t_data *data);
+void			free_inputs(char **inputs);
+void			select_cmd(char **inputs, t_data *data);
 
-int		b_pipe(char *input1, char *input2, t_data *data);
-void	parent(char *input2, t_data *data, int pid, int *fds);
+char			**input_split(char *str);
+char			*newsplit(char *src);
+void			copy_newsplit(char *src, char *dst, char quote);
 
-int		b_cd(char **argv, t_data *data);
-int		b_echo(char **argv);
-int		b_export(char **argv, t_data *data);
-int		b_unset(char **argv, t_data *data);
-int		env_add_id(char *id, t_data *data);
-int		env_parse_id(char *id);
-int		exec_cmd(char **argv, t_data *data);
-int		janitor(char **argv, t_data *data, int exit_code);
-int		parser_error(char *input, t_data *data);
-int		parser_variable(char *input, int var_pos, t_data *data);
-int		is_quote(char input, int quote);
-int		is_var(char *input);
-int		is_word(char *input, int flags[2]);
-int		is_blank(char input);
-int		is_ctrl_op(char *input);
+int				parser_redir(char **input_address, t_data *data);
+void			parser_redir_quotes(char *str, int *i, char quote);
+void			remove_redir_input(char **input_address, int i, int j);
+char			*get_filename(char *str, int *j);
+void			make_filename(char *src, char *dst, int i, int k);
+
+void			handle_redir(char **input, int i, t_data *data);
+void			redir_from(char *str, int i, char **input, t_data *data);
+void			redir_to_append(char *str, int i, char **input, t_data *data);
+void			redir_to(char *str, int i, char **input, t_data *data);
+int				get_name_len(char *str);
 
 #endif

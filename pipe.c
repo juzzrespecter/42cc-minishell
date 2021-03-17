@@ -1,46 +1,46 @@
-#include "../minishell.h"
+#include "minishell.h"
 
 void	parent(char *input2, t_data *data, int pid, int *fds)
 {
-	int	oldfd;
-	int	status;
+	int		oldfd;
+	int		status;
 
-	if (waitpid(pid, &status, 0) != pid) //espera por la finalización del hijo y devuelve su pid como confirmación tras sesgarlo
-		exit(EXIT_FAILURE);	     // si no es así salimos y lanzamos error
+	if (waitpid(pid, &status, 0) != pid)
+		exit(EXIT_FAILURE);
 	free(g_input);
 	g_input = NULL;
-	oldfd = dup(0);		//hacemos copia del fd de lectura (stdin)
-	dup2(fds[0], 0);	//en vez de leer del stdin(0) hacemos que lea del fds[0]
+	oldfd = dup(0);
+	dup2(fds[0], 0);
 	close(fds[0]);
 	close(fds[1]);
-	parser(input2, data);	//ejecutamos input2
-	dup2(oldfd, 0);		//en vez de leer del stdin(0) hacemos que lea del oldfd, que era una copia del stdin(0)
+	parser_start(input2, data);
+	dup2(oldfd, 0);
 	close(oldfd);
 }
 
-int	b_pipe(char *input1, char *input2, t_data *data)
+int		b_pipe(char *input1, char *input2, t_data *data)
 {
 	pid_t	pid;
-	int	fds[2];				//fds[0] lectura y fds[1] escritura
+	int		fds[2];
 
-	if (pipe(fds) < 0)			//si devuelve -1 error en la creacion del pipe
+	if (pipe(fds) < 0)
 		exit(EXIT_FAILURE);
-	pid = fork();				//pipe siempre antes de fork para que padre e hijo compartan variables
-	if (pid == 0)				//si es 0 se ha creado el fork y se está ejecutando el hijo
+	pid = fork();
+	if (pid == 0)
 	{
 		free(input2);
-		dup2(fds[1], 1);		//en vez de escribir en stdout(1) hacemos que escriba en fds[1]
+		dup2(fds[1], 1);
 		close(fds[0]);
 		close(fds[1]);
-		parsercore(input1, data, 1);		//ejecutamos input1
+		parsercore(input1, data, 1);
 	}
-	else if (pid < 0)			//-1 error al creal el fork
+	else if (pid < 0)
 		exit(EXIT_FAILURE);
-	else					//>0 fork creado, se está ejecutando el padre y nos ha devuelto el PID del hijo
+	else
 	{
 		free(input1);
 		input1 = NULL;
-		parent(input2, data, pid, fds);	//vamos al padre para ejecutar input 2
+		parent(input2, data, pid, fds);
 	}
 	return (1);
 }
