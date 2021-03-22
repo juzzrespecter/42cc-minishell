@@ -1,46 +1,106 @@
 #include "minishell.h"
 
-void	parent(char *input2, t_data *data, int pid, int *fds)
+static int	cmd_len(char *input) 
 {
-	int		oldfd;
-	int		status;
+	int	len;
+	int	quote_ctrl;
 
-	if (waitpid(pid, &status, 0) != pid)
-		exit(EXIT_FAILURE);
-	free(g_input);
-	g_input = NULL;
-	oldfd = dup(0);
-	dup2(fds[0], 0);
-	close(fds[0]);
-	close(fds[1]);
-	parser_start(input2, data);
-	dup2(oldfd, 0);
-	close(oldfd);
+	len = 0;
+	quote_ctrl = 0;
+	while (quote_ctrl == 0 && input[len] && !(input[len] == '\n' \
+				|| input[len] == ';' || input[len] == '|'))
+	{
+		quote_ctrl = is_quote(input[len], quote_ctrl);
+		len++;
+	}
+	return (len);
 }
 
-int		b_pipe(char *input1, char *input2, t_data *data)
+static int	close_pipes(int pipe_read, int pipe_write)
 {
-	pid_t	pid;
-	int		fds[2];
+	int	close_read;
+	int	close_write;
 
-	if (pipe(fds) < 0)
-		exit(EXIT_FAILURE);
-	pid = fork();
-	if (pid == 0)
+	close_read = 0;
+	close_write = 0;
+	if (pipe_read != -1)
+		close_read = close(pipe_read);
+	if (pipe_write != -1)
+		close_write = close(pipe_write);
+	return (1 * ((close_read != -1 && close_write != -1)));
+	
+}
+
+static void		parent_waits(t_data *data)
+{
+	int	wait_out;
+	int	wait_status;
+
+	wait_out = 1;
+	while (wait_out > 0)
+		wait_out = wait(&wait_status);
+	exit(janitor(data, WEXITSTATUS(wait_status)));
+}
+
+static void	pipe_cmd(char *cmd, int pipe_write, int pipe_read, t_data *data)
+{
+	int	dup_wr;
+	int	dup_rd;
+	pid_t	child_pid;
+
+	dup_wr = 0;
+	dup_rd = 0;
+	child_pid = fork();
+	if (child_pid == 0)
 	{
-		free(input2);
-		dup2(fds[1], 1);
-		close(fds[0]);
-		close(fds[1]);
-		parsercore(input1, data, 1);
+		if (pipe_write != -1)
+			dup_wr = dup2(pipe_write, STDOUT_FILENO);
+		if (pipe_read != -1)
+			dup_rd = dup2(pipe_read, STDIN_FILENO);
+		close_pipes(pipe_write, pipe_read);
+		if (dup_wr == -1 || dup_rd == -1)
+		{
+			free(cmd);
+			exit (janitor(data, errno));
+		}
+		parsercore(cmd, data, 1);
 	}
-	else if (pid < 0)
-		exit(EXIT_FAILURE);
-	else
+	close_pipes(pipe_write, pipe_read);
+	free(cmd);
+	if (child_pid == -1)
+		exit (janitor(data, errno));
+}
+
+void			b_pipe(char *input, t_data *data)
+{	
+	int	i;
+	int	len;
+	int	fd[2];
+	int	pipe_read;
+	int	pipe_ret;
+	int	next_pipe;
+	char	*cmd;
+
+	i = 0;
+	next_pipe = 1;
+	len = cmd_len(input);
+	pipe_read = -1;
+	while (next_pipe)
 	{
-		free(input1);
-		input1 = NULL;
-		parent(input2, data, pid, fds);
+		cmd = ft_substr(input, i, len);
+		pipe_ret = pipe(fd);
+		if (pipe_ret == -1)
+		{
+			free(cmd);
+			exit(janitor(data, errno));	
+		}
+		pipe_cmd(cmd, fd[1], pipe_read, data);
+		pipe_read = fd[0];
+		i += len + 1;
+		len = cmd_len(input + i);
+		next_pipe = 1 * (input[i + len] == '|');
 	}
-	return (1);
+	cmd = ft_substr(input, i, len);
+	pipe_cmd(cmd, -1, pipe_read, data);
+	parent_waits(data);
 }

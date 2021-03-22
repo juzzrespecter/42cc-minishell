@@ -1,25 +1,22 @@
 #include "minishell.h"
 
-	// del input tenemos que recoger los comandos validos (cualquier word que no sea una redireccion)
-	// guardamos comandos en argv, argv[0] es el comando a ejecutar, el resto son los argumentos del comando
-	// parse argv[0] en busca de slashes:
-	//   hay un slash: montar en argv[0], execve(argv[0], argv, data->env)
-	//   no hay un slash:
-	//   check builtins:
-	//     existe un builtin con ese nombre -> llamada a funcion (parece que en pipalineas se forkea este proceso tambien???)
-	//     no existe un builtin:
-	//       comprobar variable de entorno PATH:
-	//       si existe: montar argv[0] con cada path en la variable y comprobar si existe
-	//         existe PATH/argv[0], execve(PATH/argv[0], argv, data->env)
-	//         no existe: return error
-	//       no existe PATH: intenta ejecutar el comando
-	//
-	// si recibe una lista de comandos vacia, ignora la ejecucion y devuelve 0
-	// (a este punto solo se puede llegar con la expansion de una variable que resulte en una cadena vacia)
-	// p. ej >~ export var="" ; $var;
-
-
-	// faltan las redirecciones de stdin, stdout, stderr si las hubieran
+// del input tenemos que recoger los comandos validos (cualquier word que no sea una redireccion)
+// guardamos comandos en argv, argv[0] es el comando a ejecutar, el resto son los argumentos del comando
+// parse argv[0] en busca de slashes:
+//   hay un slash: montar en argv[0], execve(argv[0], argv, data->env)
+//   no hay un slash:
+//   check builtins:
+//     existe un builtin con ese nombre -> llamada a funcion (parece que en pipalineas se forkea este proceso tambien???)
+//     no existe un builtin:
+//       comprobar variable de entorno PATH:
+//       si existe: montar argv[0] con cada path en la variable y comprobar si existe
+//         existe PATH/argv[0], execve(PATH/argv[0], argv, data->env)
+//         no existe: return error
+//       no existe PATH: intenta ejecutar el comando
+//
+// si recibe una lista de comandos vacia, ignora la ejecucion y devuelve 0
+// (a este punto solo se puede llegar con la expansion de una variable que resulte en una cadena vacia)
+// p. ej >~ export var="" ; $var;
 
 static int	slash_in_cmd(char *cmd)
 {
@@ -43,21 +40,24 @@ static char	*exec_mnt_path(char *path, char *cmd)
 	i = 0;
 	while (path[i])
 	{
-		if (!paths[i + 1] && !(paths[i] == '/'))
+		if (!path[i + 1] && !(path[i] == '/'))
 		{
 			aux_path = path;
 			path = ft_strjoin(path, "/");
 			free(aux_path);
 			if (!path)
 				return (NULL);
+			break;
 		}
-		aux_path = path;
-		path = ft_strjoin(paths[i], cmd);
-		free(aux_path);
-		return (!path ? NULL : path);
+		i++;
+	}
+	aux_path = path;
+	path = ft_strjoin(path, cmd);
+	free(aux_path);
+	return (path);
 }
 
-static char	*clean_paths(char **paths)
+static char	**clean_paths(char **paths)
 {
 	int	i;
 
@@ -92,16 +92,18 @@ int			exec_cmd(char **argv, t_data *data)
 	struct stat	buff;
 	char		**paths;
 	char		*path_env;
-	int			i;
+	char		*cmd;
+	int		i;
 
 	i = 0;
 	if (!argv[0])
-		exit (janitor(argv, data, 0));
-	path_env = search_env("PATH", data->env);
+		exit(janitor(data, 0));
+	path_env = search_env(data->env, "PATH");
+	cmd = argv[0];
 	if (!slash_in_cmd(argv[0]) && path_env)
 	{
 		if (!(paths = exec_get_paths(path_env, argv[0])))
-			exit(janitor(argv, data, errno));
+			exit(janitor(data, errno));
 		while (paths[i])
 		{
 			if (!stat(paths[i], &buff))
@@ -109,8 +111,9 @@ int			exec_cmd(char **argv, t_data *data)
 			i++;
 		}
 		if (!paths[i])
-			exit(janitor(argv, data, 127));
+			exit(janitor(data, 127));
+		cmd = paths[i];
 	}
 	execve(cmd, argv, data->env);
-	exit(janitor(argv, data, errno));
+	exit(janitor(data, errno));
 }

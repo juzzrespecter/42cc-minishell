@@ -2,42 +2,38 @@
 
 void		select_cmd(char **inputs, t_data *data)
 {
+	int	wait_status;
+	pid_t	process_pid;
+
 	if (!data->redir)
 	{
 		data->redir = 1;
 		return ;
 	}
-//	if (!ft_strcmp(inputs[0], "echo"))
-//		b_echo(inputs);
-	else if (!ft_strcmp(inputs[0], "pwd"))
+	if (!ft_strncmp(inputs[0], "echo", ft_strlen(inputs[0])))
+		b_echo(inputs);
+	else if (!ft_strncmp(inputs[0], "pwd", ft_strlen(inputs[0])))
 		b_pwd(data);
-//	else if (!ft_strcmp(inputs[0], "cd"))
-//		b_cd(inputs, data);
-	else if (!ft_strcmp(inputs[0], "env"))
+	else if (!ft_strncmp(inputs[0], "cd", ft_strlen(inputs[0])))
+		b_cd(inputs, data);
+	else if (!ft_strncmp(inputs[0], "env", ft_strlen(inputs[0])))
 		b_env(data->env);
-	else if (!ft_strcmp(inputs[0], "exit"))
+	else if (!ft_strncmp(inputs[0], "exit", ft_strlen(inputs[0])))
 		b_exit(inputs, data);
-//	else if (!ft_strcmp(inputs[0], "export"))
-//		b_export(inputs, data);
-//	else if (!ft_strcmp(inputs[0], "unset"))
-//		b_unset(inputs, data);
-//	else
-//	{
-//		exec(inputs, data);
-//	}
-}
-
-void		free_inputs(char **inputs)
-{
-	int	i;
-
-	i = 0;
-	while (inputs[i])
+	else if (!ft_strncmp(inputs[0], "export", ft_strlen(inputs[0])))
+		b_export(inputs, data);
+	else if (!ft_strncmp(inputs[0], "unset", ft_strlen(inputs[0])))
+		b_unset(inputs, data);
+	else
 	{
-		free(inputs[i]);
-		i++;
+		process_pid = fork();
+		if (process_pid == -1)
+			exit(EXIT_FAILURE);
+		if (process_pid == 0)
+			exec_cmd(inputs, data);
+		wait(&wait_status);
+		g_status = WEXITSTATUS(wait_status);	
 	}
-	free(inputs);
 }
 
 void		close_fds(t_data *data)
@@ -68,11 +64,6 @@ int			parsercore(char *clean_input, t_data *data, int piped)
 	char	**inputs;
 	int		oldfd[2];
 
-//	if (parser_error(clean_input))
-//	{
-//		free(clean_input);
-//		return (0);
-//	}
 	oldfd[0] = dup(1);
 	oldfd[1] = dup(0);
 	clean_input = input_cleaner(clean_input);

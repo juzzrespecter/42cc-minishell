@@ -49,7 +49,7 @@ void	b_env(char **env)
 	i = 0;
 	while (env[i])
 	{
-		str = ft_strstr(env[i], "=");
+		str = ft_strnstr(env[i], "=", ft_strlen(env[i]));
 		if (str)
 		{
 			j = 0;

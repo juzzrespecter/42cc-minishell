@@ -92,6 +92,8 @@ int				parser_start(char *input, t_data *data)
 {
 	char	*clean_input;
 
+	if ((parser_error(input, data)) != 0)
+		return (0);
 	clean_input = input_cleaner(input);
 	g_input = NULL;
 	if (clean_input == 0)

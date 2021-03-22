@@ -7,7 +7,7 @@ static char	**unset_rm_id(char *id, char **env)                         /* monta
 	int		id_len;
 	char	**new_env;
 
-	new_env = (char **)ft_calloc((env_len(env) - 1), sizeof(char *)); 
+	new_env = (char **)ft_calloc((envlen(env) - 1), sizeof(char *)); 
 	if (new_env == NULL)
 		return (NULL);
 	i = 0;
@@ -68,8 +68,7 @@ int			b_unset(char **argv, t_data *data)
 			}
 		}
 		else
-			err_status = print_error(argv[0], \
-					"not a valid identifier", cmd->fd_err);
+			err_status = print_error(argv[0], "not a valid identifier");
 		i++;
 	}
 	return (err_status);

@@ -7,7 +7,6 @@
 
 char	*search_env(char **env, char *name)
 {
-	char	*value;
 	int	name_len;
 	int	i;
 
