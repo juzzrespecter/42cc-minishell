@@ -35,11 +35,13 @@ static char		*concat_variable(char *input, char *var, int input_pos)
 	return (new_input);
 }
 
-static int		expand_exit_status(char *input,int var_pos)
+static int		expand_exit_status(char **input_ptr, int var_pos)
 {
 	char	*new_input;
 	char	*aux_input;
+	char	*input;
 
+	input = *input_ptr;
 	if (!(new_input = ft_itoa(g_status)))
 		return (-1);
 	input[var_pos - 1] = 0;
@@ -49,8 +51,9 @@ static int		expand_exit_status(char *input,int var_pos)
 	if (!new_input)
 		return (-1);
 	aux_input = new_input;
-	new_input = ft_strjoin(new_input, input + 1);
+	new_input = ft_strjoin(new_input, input + var_pos + 1);
 	free(aux_input);
+	*input_ptr = new_input;
 	return (!new_input ? -1 : 1);
 }
 
@@ -65,7 +68,7 @@ static int		parser_variable(char **input_ptr, int var_pos, t_data *data)
 	var_pos++;
 	input = *input_ptr;
 	if (input[var_pos] == '?')
-		return (expand_exit_status(input, var_pos));
+		return (expand_exit_status(input_ptr, var_pos));
 	var_len = is_var(input + var_pos);
 	if (var_len == 0)
 		return (1);

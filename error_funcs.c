@@ -41,6 +41,8 @@ int	print_error(char *msg1, char *msg2, int exit_code)
 		write(2, msg1, ft_strlen(msg1));
 		write(2, ": ", 2);
 		write(2, msg2, ft_strlen(msg2));
+		write(2, "\n", 1);
 	}
+	g_status = exit_code;
 	return (exit_code);
 }
