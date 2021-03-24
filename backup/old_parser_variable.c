@@ -13,11 +13,11 @@ static char	*copy_variable(char *input, int var_len, char **env)
 	if (!var_on_env)
 		var_on_env = ft_strdup("");
 	else
-		var_on_env = ft_strdup(var_on_env + var_len + 1);
+		var_on_env = ft_strdup(input + var_len + 1);
 	return (var_on_env);
 }
 
-static char		*concat_variable(char *input, char *var, int input_pos)
+static char	*expand_variable(char *input, char *var, int input_pos)
 {
 	char	*new_input;
 	char	*aux_input;
@@ -35,7 +35,7 @@ static char		*concat_variable(char *input, char *var, int input_pos)
 	return (new_input);
 }
 
-static int		expand_exit_status(char *input,int var_pos)
+static int	expand_exit_status(char *input,int var_pos)
 {
 	char	*new_input;
 	char	*aux_input;
@@ -54,10 +54,10 @@ static int		expand_exit_status(char *input,int var_pos)
 	return (!new_input ? -1 : 1);
 }
 
-static int		parser_variable(char **input_ptr, int var_pos, t_data *data)
+int		parser_variable(char **input_ptr, int var_pos, t_data *data)
 {
-	int		var_len;
-	int		len;
+	int	var_len;
+	int	len;
 	char	*var;
 	char	*new_input;
 	char	*input;
@@ -73,36 +73,11 @@ static int		parser_variable(char **input_ptr, int var_pos, t_data *data)
 		return (-1);
 	input[var_pos - 1] = 0;
 	len = ft_strlen(var);
-	new_input = concat_variable(input, var, var_len + var_pos);
+	new_input = expand_variable(input, var, var_len + var_pos);
 	free(var);
 	if (!new_input)
 		return (-1);
 	free(input);
 	*input_ptr = new_input;
 	return (len);
-}
-
-char			*expand_variables(char *input, t_data *data)
-{
-	char	*input_aux;
-	int		i;
-	int		var_out;
-	int		quote_ctrl;
-
-	i = 0;
-	quote_ctrl = 0;
-	while (input[i])
-	{
-		quote_ctrl = is_quote(input[i], quote_ctrl);
-		if (input[i] == '$' && ((quote_ctrl % 2) == 0))
-		{
-			input_aux = input;
-			var_out = parser_variable(&input, i, data);
-			if (var_out == -1)
-				return (NULL);
-			i += var_out;
-		}
-		i++;
-	}
-	return (input);
 }

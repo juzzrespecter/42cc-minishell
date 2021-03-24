@@ -100,7 +100,7 @@ char			*newsplit(char *src)
 	return (dst);
 }
 
-char		**input_split(char *str)
+char			**input_split(char *str)
 {
 	char	**inputs;
 	size_t	count;

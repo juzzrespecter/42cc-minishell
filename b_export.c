@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int		export_print(t_data *data)  /* imprime las variables de la forma: declare -x NAME="VALUE"   */
+static int		export_print(t_data *data)
 {
 	int		i;
 	int 	j;
@@ -23,24 +23,23 @@ static int		export_print(t_data *data)  /* imprime las variables de la forma: de
 	return (0);
 }
 
-int			b_export(char **argv, t_data *data)        /* guarda nuevas variables en la lista de variables de entorno a exportar en procesos hijo	*/
+int			b_export(char **argv, t_data *data)
 {
 	int		i;
-	int		err_status;                                 /* error de salida: con solo un argumento que falle la validacion   */
-                                                        /* export() retorna 1, aunque el resto de argumentos hayan sido     */
-	err_status = 0;                                     /* exportados correctamente                                         */
+	int		err_status;
+	err_status = 0;
 	i = 0;
 	if (argv[1] == NULL)
-		return (export_print(data));       /* sin argumentos, export imprime las variables a ser exportadas, que   */
-	while (argv[i] != NULL)                        /* como no nos piden que gestionemos variables locales, son todas.      */
+		return (export_print(data));
+	while (argv[i] != NULL)
 	{
-		if (env_parse_id(argv[i]) == 0)            /* func parse id: el nombre de la variable solo permie [A-Za-z0-9_]     */
+		if (env_parse_id(argv[i]) == 0)
 		{
-			if (env_add_id(argv[i], data) == -1)   /* guarda la variable en la lista de variabes de entorno                */
+			if (env_add_id(argv[i], data) == -1)
 				return (errno + 128);
 		}
 		else
-			err_status = print_error(argv[i], "not a valid identifier");
+			err_status = print_error(argv[i], "not a valid identifier", 1);
 		i++;
 	}
 	return (err_status);

@@ -5,7 +5,7 @@ SRCS	+= input_split.c parser_redir.c parser_redir2.c
 
 SRCS	+= pwd.c env.c pipe.c signal.c exit.c
 
-SRCS	+= parser_utils_2.c parser_utils_3.c b_echo.c b_export.c b_unset.c b_cd.c janitor.c print_error.c env_edit_utils.c exec_cmd.c parser_variable.c parser_error.c search_env.c
+SRCS	+= parser_utils_2.c parser_utils_3.c b_echo.c b_export.c b_unset.c b_cd.c env_edit_utils.c exec_cmd.c parser_variable.c parser_error.c search_env.c error_funcs.c
 
 LIBFT	= libft/libft.a
 

@@ -39,7 +39,7 @@ static void		parent_waits(t_data *data)
 	wait_out = 1;
 	while (wait_out > 0)
 		wait_out = wait(&wait_status);
-	exit(janitor(data, WEXITSTATUS(wait_status)));
+	exit(janitor(NULL, data, WEXITSTATUS(wait_status)));
 }
 
 static void	pipe_cmd(char *cmd, int pipe_write, int pipe_read, t_data *data)
@@ -61,14 +61,14 @@ static void	pipe_cmd(char *cmd, int pipe_write, int pipe_read, t_data *data)
 		if (dup_wr == -1 || dup_rd == -1)
 		{
 			free(cmd);
-			exit (janitor(data, errno));
+			exit (janitor(NULL, data, errno));
 		}
 		parsercore(cmd, data, 1);
 	}
 	close_pipes(pipe_write, pipe_read);
 	free(cmd);
 	if (child_pid == -1)
-		exit (janitor(data, errno));
+		exit (janitor(NULL, data, errno));
 }
 
 void			b_pipe(char *input, t_data *data)
@@ -92,7 +92,7 @@ void			b_pipe(char *input, t_data *data)
 		if (pipe_ret == -1)
 		{
 			free(cmd);
-			exit(janitor(data, errno));	
+			exit(janitor(NULL, data, errno));	
 		}
 		pipe_cmd(cmd, fd[1], pipe_read, data);
 		pipe_read = fd[0];

@@ -49,13 +49,13 @@ int			parser_error(char *input, t_data *data)
 		if ((token_len = is_word(input + i)))
 		{
 			if (!(parser_word(input + i, token_len, prev_token, data)))
-				return (258);
+				return (print_error(data->err, NULL, 258));
 			i += token_len;
 		}
 		if ((token_len = is_ctrl_op(input + i)))
 		{
 			if (!(parser_ctrl(input + i, token_len, prev_token, data)))
-				return (258);
+				return (print_error(data->err, NULL, 258));
 			i += token_len;
 		}
 		i += is_blank(input[i]);
