@@ -75,7 +75,7 @@ char	*search_env(char **env, char *name);
 int		parser_error(char *input, t_data *data);
 char	*expand_variables(char *input, t_data *data);
 int		exec_cmd(char **argv, t_data *data);
-int		janitor(char **argv, t_data *data, int exit_code);
+int		janitor(char **argv, t_data *data, int err_code);
 void	b_pipe(char *input, t_data *data);
 int		print_error(char *msg1, char *msg2, int exit_code);
 
