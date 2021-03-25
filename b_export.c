@@ -39,7 +39,7 @@ int			b_export(char **argv, t_data *data)
 				return (errno + 128);
 		}
 		else
-			err_status = print_error(argv[i], "not a valid identifier", 1);
+			err_status = print_error(argv[0], argv[i], "not a valid identifier", 1);
 		i++;
 	}
 	return (err_status);

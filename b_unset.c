@@ -1,8 +1,8 @@
 #include "minishell.h"
 
-static char	**unset_rm_id(char *id, char **env)                         /* monta un nuevo array de strings con las variables de */
-{                                                                       /* salta la marcada por unset. Probablemente haya una   */
-	int		i;                                                          /* forma mas inteligente de hacer esto.                 */
+static char	**unset_rm_id(char *id, char **env)
+{
+	int		i;
 	int		j;
 	int		id_len;
 	char	**new_env;
@@ -15,7 +15,7 @@ static char	**unset_rm_id(char *id, char **env)                         /* monta
 	id_len = ft_strlen(id);
 	while (env[i])
 	{
-		if (!(ft_strncmp(id, env[i], id_len) == 0 && env[i][id_len] == '='))    /* si no encuentra coincidencia, copia en new_env */
+		if (!(ft_strncmp(id, env[i], id_len) == 0 && env[i][id_len] == '='))
 		{
 			new_env[j] = ft_strdup(env[i]);
 			if (new_env[j] == NULL)
@@ -28,12 +28,12 @@ static char	**unset_rm_id(char *id, char **env)                         /* monta
 		i++;
 	}
 	new_env[j] = NULL;
-	return (new_env);                                                   /* devuelve la nueva tabla */
+	return (new_env);
 }
 
-static int	unset_id_in_env(char *id, char **env)                       /* busca coincidencias entre la variable pasada como    */
-{                                                                       /* argumento y alguna variable de entorno               */
-	int	i;                                                              /* retorna 0 if success, 1 if failure                   */
+static int	unset_id_in_env(char *id, char **env)
+{                                              
+	int	i;
 	int	id_len;
 
 	i = 0;
@@ -68,7 +68,7 @@ int			b_unset(char **argv, t_data *data)
 			}
 		}
 		else
-			err_status = print_error(argv[0], "not a valid identifier", 1);
+			err_status = print_error(argv[0], argv[i], "not a valid identifier", 1);
 		i++;
 	}
 	return (err_status);

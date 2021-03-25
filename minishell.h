@@ -11,11 +11,16 @@
 # include "libft.h"
 # include <fcntl.h>
 
+typedef struct	s_token
+{
+	char	*token_str;
+	int		info;
+}				t_token;
+
 typedef	struct	s_data
 {
 	char	**env;
 	char	*pwd;
-	char	*err;
 	int	fd_in;
 	int	fd_out;
 	int	redir;
@@ -72,11 +77,11 @@ int		is_word(char *input);
 int		is_var(char *input);
 int		is_quote(char input, int quote);
 char	*search_env(char **env, char *name);
-int		parser_error(char *input, t_data *data);
+int		parser_error(char *input);
 char	*expand_variables(char *input, t_data *data);
 int		exec_cmd(char **argv, t_data *data);
 int		janitor(char **argv, t_data *data, int err_code);
 void	b_pipe(char *input, t_data *data);
-int		print_error(char *msg1, char *msg2, int exit_code);
+int		print_error(char *cmd, char *arg , char *err_msg, int exit_code);
 
 #endif

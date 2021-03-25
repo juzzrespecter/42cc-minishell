@@ -20,13 +20,13 @@ int		janitor(char **argv, t_data *data, int err_code)
 
 	exit_status = 0;
 	if (err_code == 127)
-		exit_status = print_error(argv[0], "command not found", err_code);
+		exit_status = print_error(argv[0], NULL, "command not found", err_code);
 	if (err_code == 2)
-		exit_status = print_error(argv[0], strerror(errno), 127);
+		exit_status = print_error(argv[0], NULL, strerror(errno), 127);
 	if (err_code == 13)
-		exit_status = print_error(argv[0], strerror(errno), 126);
+		exit_status = print_error(argv[0], NULL, strerror(errno), 126);
 	if (err_code != 2 && err_code != 13 && err_code != 127)
-		exit_status = print_error(argv[0], strerror(errno), errno + 128);
+		exit_status = print_error(argv[0], NULL, strerror(errno), errno + 128);
 	if (argv != NULL)
 		free_inputs(argv);
 	free_env(data->env);
@@ -46,22 +46,25 @@ void	free_inputs(char **inputs)
 	free(inputs);
 }
 
-int		print_error(char *msg1, char *msg2, int exit_code)
+int		print_error(char *cmd, char *arg, char *err_msg, int exit_code)
 {
 	write(2, "bash: ", 6);
-	if (exit_code == 258)
+	if (cmd != NULL)
 	{
-		write(2, "syntax error near unexpected token `", 36);
-		write(2, msg1, ft_strlen(msg1));
-		write(2, "'\n", 2);
-	}
-	else
-	{
-		write(2, msg1, ft_strlen(msg1));
+		write(2, cmd, ft_strlen(cmd));
 		write(2, ": ", 2);
-		write(2, msg2, ft_strlen(msg2));
-		write(2, "\n", 1);
 	}
+	if (arg != NULL)
+	{
+		write(2, arg, ft_strlen(arg));
+		write(2, ": ", 2);
+	}
+	write(2, err_msg, ft_strlen((err_msg)));
+	write(2, "\n", 1);
 	g_status = exit_code;
 	return (exit_code);
 }
+
+
+// func montar error para identificadores no validos
+// (strjoin)

@@ -36,6 +36,7 @@ static void		parent_waits(t_data *data)
 	int	wait_out;
 	int	wait_status;
 
+	// aqui hay que pillar el exit_status del ultimo comando ejecutado, no el ultimo terminado
 	wait_out = 1;
 	while (wait_out > 0)
 		wait_out = wait(&wait_status);
