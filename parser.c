@@ -26,6 +26,8 @@ void			input_copy(char *dst, char *src)
 	{
 		if (*src == ' ' && (*(src + 1) == ' ' || *(src + 1) == '\0'))
 			src++;
+		else if (*str == '\t' && (*(str + 1) == '\t' || *(str + 1) == '\0'))
+			str++;
 		else if (*src == '"' || *src == '\'')
 		{
 			*(dst++) = *src;
@@ -50,6 +52,8 @@ static int		input_len(char *str)
 	while (*str)
 	{
 		if (*str == ' ' && (*(str + 1) == ' ' || *(str + 1) == '\0'))
+			str++;
+		else if (*str == '\t' && (*(str + 1) == '\t' || *(str + 1) == '\0'))
 			str++;
 		else if (*str == '\\' && (str += 2))
 			i += 4;
@@ -92,7 +96,7 @@ int				parser_start(char *input, t_data *data)
 {
 	char	*clean_input;
 
-	if ((parser_error(input)) != 0)
+	if ((parser_error(input, data)) != 0)
 		return (0);
 	clean_input = input_cleaner(input);
 	g_input = NULL;
