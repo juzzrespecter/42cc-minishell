@@ -6,18 +6,6 @@ int		janitor(char **argv, t_data *data, int err_code)
 	int	exit_status;
 
 	i = 0;
-
-	/* cuatro casos:
-	 * 127 - cmd not found
-	 * errno == 2 - no such file or directory (stderror)
-	 * errno == 13 - cannot be executed (perm denied)
-	 * otro errno
-	 *
-	 * caso 1 & 2 devuelve 127
-	 * caso 3 devuelve 126
-	 * caso 4 devuelve 128 + n
-	 */
-
 	exit_status = 0;
 	if (err_code == 127)
 		exit_status = print_error(argv[0], NULL, "command not found", err_code);
@@ -64,7 +52,3 @@ int		print_error(char *cmd, char *arg, char *err_msg, int exit_code)
 	g_status = exit_code;
 	return (exit_code);
 }
-
-
-// func montar error para identificadores no validos
-// (strjoin)

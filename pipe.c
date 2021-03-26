@@ -7,8 +7,8 @@ static int	cmd_len(char *input)
 
 	len = 0;
 	quote_ctrl = 0;
-	while (quote_ctrl == 0 && input[len] && !(input[len] == '\n' \
-				|| input[len] == ';' || input[len] == '|'))
+	while ((quote_ctrl != 0 || !(input[len] == '\n' \
+				|| input[len] == ';' || input[len] == '|')) && input[len])
 	{
 		quote_ctrl = is_quote(input[len], quote_ctrl);
 		len++;

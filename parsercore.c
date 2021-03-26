@@ -1,15 +1,7 @@
 #include "minishell.h"
 
-void		select_cmd(char **inputs, t_data *data)
+static int	select_from_builtins(char **inputs, t_data *data)
 {
-	int	wait_status;
-	pid_t	process_pid;
-
-	if (!data->redir)
-	{
-		data->redir = 1;
-		return ;
-	}
 	if (!ft_strncmp(inputs[0], "echo", ft_strlen(inputs[0])))
 		b_echo(inputs);
 	else if (!ft_strncmp(inputs[0], "pwd", ft_strlen(inputs[0])))
@@ -25,6 +17,23 @@ void		select_cmd(char **inputs, t_data *data)
 	else if (!ft_strncmp(inputs[0], "unset", ft_strlen(inputs[0])))
 		b_unset(inputs, data);
 	else
+		return (0);
+	return (1);
+}
+
+void		select_cmd(char **inputs, t_data *data)
+{
+	int		wait_status;
+	int		builtin_true;
+	pid_t	process_pid;
+
+	if (!data->redir)
+	{
+		data->redir = 1;
+		return ;
+	}
+	builtin_true = select_from_builtins(inputs, data);
+	if (builtin_true == 0)
 	{
 		process_pid = fork();
 		if (process_pid == -1)

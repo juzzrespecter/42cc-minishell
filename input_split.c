@@ -56,35 +56,6 @@ void			copy_newsplit(char *src, char *dst, char quote)
 	*dst = '\0';
 }
 
-static size_t	stringcount(char *str)
-{
-	int		i;
-	char	quote;
-	int		slash_count;
-
-	i = 1;
-	str--;
-	while (*(++str))
-	{
-		if (*str == '"' || *str == '\'')
-		{
-			quote = *(str++);
-			while (*str != quote)
-			{
-				slash_count = 0;
-				while (*str == '\\' && quote == '"' && ++slash_count)
-					str++;
-				if (slash_count && !(slash_count % 2))
-					str--;
-				str++;
-			}
-		}
-		if (*str == ' ')
-			i++;
-	}
-	return (i);
-}
-
 char			*newsplit(char *src)
 {
 	int		len;
@@ -103,8 +74,8 @@ char			*newsplit(char *src)
 char		**input_split(char *str)
 {
 	char	**inputs;
-	size_t	count;
-	size_t	i;
+	int		count;
+	int		i;
 
 	count = stringcount(str);
 	inputs = malloc((count + 1) * sizeof(char *));
