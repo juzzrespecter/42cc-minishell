@@ -13,7 +13,7 @@ static char	*copy_variable(char *input, int var_len, int quote, char **env)
 	if (!var_on_env)
 		var_on_env = ft_strdup("");
 	else
-		var_on_env = copy_literal(var_on_env + var_len + 1, quote);
+		var_on_env = copy_literal(var_on_env + var_len + 1);
 	return (var_on_env);
 }
 
@@ -57,7 +57,7 @@ static int		expand_exit_status(char **input_ptr, int var_pos)
 	return (!new_input ? -1 : 1);
 }
 
-static int		parser_variable(char **input_ptr, int var_pos, int quote, t_data *data)
+int			parser_variable(char **input_ptr, int var_pos, int quote, t_data *data)
 {
 	int		var_len;
 	int		len;
@@ -83,32 +83,4 @@ static int		parser_variable(char **input_ptr, int var_pos, int quote, t_data *da
 	free(input);
 	*input_ptr = new_input;
 	return (len);
-}
-
-char			*expand_variables(char *input, t_data *data)
-{
-	int		i;
-	int		var_out;
-	int		quote_ctrl;
-	char	*new_input;
-
-	i = 0;
-	quote_ctrl = 0;
-	new_input = ft_strdup(input);
-	free(input);
-	if (!new_input)
-		return (NULL);
-	while (new_input[i])
-	{
-		quote_ctrl = is_quote(new_input[i], quote_ctrl);
-		if (new_input[i] == '$' && ((quote_ctrl % 2) == 0))
-		{
-			var_out = parser_variable(&new_input, i, quote_ctrl, data);
-			if (var_out == -1)
-				return (NULL);
-			i += var_out;
-		}
-		i++;
-	}
-	return (new_input);
 }

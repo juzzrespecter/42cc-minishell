@@ -40,6 +40,7 @@ static int	parser_word(char *input, int token_len, t_token *prev_token)
 	if ((next_char && fd_true && (prev_token->info == REDIR)))
 		return (parser_err_msg(token_str));
 	prev_token->info = WORD;
+	prev_token->token_str = token_str;
 	return (0);
 }
 

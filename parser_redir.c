@@ -2,8 +2,7 @@
 
 void		make_filename(char *src, char *dst, int i, int k)
 {
-	while (src[i] != ' ' && src[i] != '|' && src[i] != ';' && src[i] != '>' &&
-			src[i] != '<' && src[i])
+	while (src[i] != ' ' && src[i])
 	{
 		if (src[i] == '\'')
 		{
@@ -27,7 +26,7 @@ void		make_filename(char *src, char *dst, int i, int k)
 	dst[k] = '\0';
 }
 
-char		*get_filename(char *str, int *j)
+char		*get_filename(char *str, int *j, t_data *data)
 {
 	int		i;
 	int		k;
@@ -35,12 +34,11 @@ char		*get_filename(char *str, int *j)
 
 	i = get_name_len(str);
 	*j += i;
-	filename = malloc((i + 1) * sizeof(char));
-	if (!filename)
-		return (NULL);
 	i = 0;
 	k = 0;
-	make_filename(str, filename, i, k);
+	filename = ft_substr(str, 0, is_word(str));
+	filename = expand_and_control(filename, data);
+	filename = copy_word(filename);
 	return (filename);
 }
 

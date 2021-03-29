@@ -38,14 +38,15 @@ void	redir_to(char *str, int i, char **input, t_data *data)
 	j = i;
 	if (str[j + 1] == ' ')
 		j++;
-	filename = get_filename(&(str[j + 1]), &j);
+	filename = get_filename(&(str[j + 1]), &j, data);
+	if (!filename)
+		return;
 	remove_redir_input(input, i, j);
 	fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
 	free(filename);
 	if (fd < 0)
 	{
-		ft_putstr_fd("Error: wrong permissions\n", 2);
-		g_status = 1;
+		g_status = print_error(NULL, NULL, strerror(errno), 1);
 		data->redir = 0;
 		return ;
 	}
@@ -66,14 +67,15 @@ void	redir_to_append(char *str, int i, char **input, t_data *data)
 	j++;
 	if (str[j + 1] == ' ')
 		j++;
-	filename = get_filename(&(str[j + 1]), &j);
+	filename = get_filename(&(str[j + 1]), &j, data);
+	if (!filename)
+		return ;
 	remove_redir_input(input, i, j);
 	fd = open(filename, O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
 	free(filename);
 	if (fd < 0)
 	{
-		ft_putstr_fd("Error: wrong permissions\n", 2);
-		g_status = 1;
+		g_status = print_error(NULL, NULL, strerror(errno), 1);
 		data->redir = 0;
 		return ;
 	}
@@ -93,7 +95,7 @@ void	redir_from(char *str, int i, char **input, t_data *data)
 	j = i;
 	if (str[j + 1] == ' ')
 		j++;
-	filename = get_filename(&(str[j + 1]), &j);
+	filename = get_filename(&(str[j + 1]), &j, data);
 	remove_redir_input(input, i, j);
 	fd = open(filename, O_RDONLY);
 	free(filename);

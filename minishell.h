@@ -57,7 +57,7 @@ void	copy_newsplit(char *src, char *dst, char quote);
 int		parser_redir(char **input_address, t_data *data);
 void	parser_redir_quotes(char *str, int *i, char quote);
 void	remove_redir_input(char **input_address, int i, int j);
-char	*get_filename(char *str, int *j);
+char	*get_filename(char *str, int *j, t_data *data);
 void	make_filename(char *src, char *dst, int i, int k);
 void	handle_redir(char **input, int i, t_data *data);
 void	redir_from(char *str, int i, char **input, t_data *data);
@@ -85,5 +85,7 @@ void	b_pipe(char *input, t_data *data);
 int		print_error(char *cmd, char *arg , char *err_msg, int exit_code);
 char	*expand_and_control(char *str, t_data *data);
 int		stringcount(char *str);
+char	*copy_literal(char *str, int quote);
+char	*copy_word(char *src);
 
 #endif

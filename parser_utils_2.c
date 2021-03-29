@@ -1,11 +1,5 @@
 #include "minishell.h"
 
-//	quote status
-//		0	no quotes
-//		1	single quotes
-//		2	double quotes
-//		3	escaped
-
 int	is_quote(char input, int quote)
 {
 	if (input == '\"')
