@@ -1,8 +1,8 @@
 #include "minishell.h"
 
-void			quote_len(char **str, int *i, char quote)
+void	quote_len(char **str, int *i, char quote)
 {
-	int slash_count;
+	int	slash_count;
 
 	while (**str != quote && **str)
 	{
@@ -23,7 +23,7 @@ void			quote_len(char **str, int *i, char quote)
 	}
 }
 
-void			escape_char(char **dst, char **src)
+void	escape_char(char **dst, char **src)
 {
 	char	quote;
 
@@ -37,7 +37,7 @@ void			escape_char(char **dst, char **src)
 	*((*dst)++) = quote;
 }
 
-int		is_fd(char *input)
+int	is_fd(char *input)
 {
 	int	i;
 
@@ -51,7 +51,7 @@ int		is_fd(char *input)
 	return (i);
 }
 
-int		stringcount(char *str)
+int	stringcount(char *str)
 {
 	int		i;
 	char	quote;

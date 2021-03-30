@@ -15,7 +15,7 @@ int	is_var(char *input)
 
 	i = 0;
 	while ((ft_isalnum(input[i]) || input[i] == '_') && input[i])
-		i++;;
+		i++;
 	return (i);
 }
 
@@ -48,7 +48,7 @@ int	is_ctrl_op(char *input)
 
 	i = 0;
 	op_len = 0;
-	if (input[i] == ';' || input[i] == '|' || input[i]  == '\n')
+	if (input[i] == ';' || input[i] == '|' || input[i] == '\n')
 		op_len++;
 	if (input[i] == '>')
 	{

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static char		*find_next_input(char *str)
+static char	*find_next_input(char *str)
 {
 	char	quote;
 	int		slash_count;
@@ -27,7 +27,7 @@ static char		*find_next_input(char *str)
 	return (str);
 }
 
-void			copy_newsplit(char *src, char *dst, char quote)
+void	copy_newsplit(char *src, char *dst, char quote)
 {
 	while (*src != ' ' && *src)
 	{
@@ -56,7 +56,7 @@ void			copy_newsplit(char *src, char *dst, char quote)
 	*dst = '\0';
 }
 
-char			*newsplit(char *src)
+char	*newsplit(char *src)
 {
 	int		len;
 	char	*dst;
@@ -71,7 +71,7 @@ char			*newsplit(char *src)
 	return (dst);
 }
 
-char		**input_split(char *str)
+char	**input_split(char *str)
 {
 	char	**inputs;
 	int		count;

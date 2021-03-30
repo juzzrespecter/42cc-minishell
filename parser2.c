@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int			parser_pipe(char *input, t_data *data)
+int	parser_pipe(char *input, t_data *data)
 {
 	char *new_input;
 	pid_t	pipe_pid;
@@ -23,7 +23,7 @@ int			parser_pipe(char *input, t_data *data)
 	return (parser_start(new_input, data));
 }
 
-int			parser_semicolon(char *input, int semicolon_pos, t_data *data)
+int	parser_semicolon(char *input, int semicolon_pos, t_data *data)
 {
 	char	*new_input;
 	int		space;
@@ -41,7 +41,7 @@ int			parser_semicolon(char *input, int semicolon_pos, t_data *data)
 	return (0);
 }
 
-int			check_special(char **input, int *i, t_data *data)
+int	check_special(char **input, int *i, t_data *data)
 {
 	if ((*input)[*i] == '\'')
 	{
@@ -63,7 +63,7 @@ int			check_special(char **input, int *i, t_data *data)
 	return (0);
 }
 
-int			parser(char *input, t_data *data, int piped)
+int	parser(char *input, t_data *data, int piped)
 {
 	int		i;
 	int		slash_count;

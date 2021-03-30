@@ -41,7 +41,7 @@ void	select_cmd(char **inputs, t_data *data)
 		if (process_pid == 0)
 			exec_cmd(inputs, data);
 		wait(&wait_status);
-		g_status = WEXITSTATUS(wait_status);	
+		g_status = WEXITSTATUS(wait_status);
 	}
 }
 
@@ -59,7 +59,7 @@ void	close_fds(t_data *data)
 	}
 }
 
-void		exit_pipe(t_data *data)
+void	exit_pipe(t_data *data)
 {
 	free_inputs(data->env);
 	if (g_input)
@@ -68,7 +68,7 @@ void		exit_pipe(t_data *data)
 	exit(EXIT_SUCCESS);
 }
 
-int			parsercore(char *clean_input, t_data *data, int piped)
+int	parsercore(char *clean_input, t_data *data, int piped)
 {
 	char	**inputs;
 	int		oldfd[2];

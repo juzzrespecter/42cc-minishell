@@ -1,21 +1,5 @@
 #include "minishell.h"
 
-static int	cmd_len(char *input) 
-{
-	int	len;
-	int	quote_ctrl;
-
-	len = 0;
-	quote_ctrl = 0;
-	while ((quote_ctrl != 0 || !(input[len] == '\n' \
-				|| input[len] == ';' || input[len] == '|')) && input[len])
-	{
-		quote_ctrl = is_quote(input[len], quote_ctrl);
-		len++;
-	}
-	return (len);
-}
-
 static int	close_pipes(int pipe_read, int pipe_write)
 {
 	int	close_read;
@@ -28,15 +12,13 @@ static int	close_pipes(int pipe_read, int pipe_write)
 	if (pipe_write != -1)
 		close_write = close(pipe_write);
 	return (1 * ((close_read != -1 && close_write != -1)));
-	
 }
 
-static void		parent_waits(t_data *data)
+static void	parent_waits(t_data *data)
 {
 	int	wait_out;
 	int	wait_status;
 
-	// aqui hay que pillar el exit_status del ultimo comando ejecutado, no el ultimo terminado
 	wait_out = 1;
 	while (wait_out > 0)
 		wait_out = wait(&wait_status);
@@ -45,8 +27,8 @@ static void		parent_waits(t_data *data)
 
 static void	pipe_cmd(char *cmd, int pipe_write, int pipe_read, t_data *data)
 {
-	int	dup_wr;
-	int	dup_rd;
+	int		dup_wr;
+	int		dup_rd;
 	pid_t	child_pid;
 
 	dup_wr = 0;
@@ -62,46 +44,52 @@ static void	pipe_cmd(char *cmd, int pipe_write, int pipe_read, t_data *data)
 		if (dup_wr == -1 || dup_rd == -1)
 		{
 			free(cmd);
-			exit (janitor(NULL, data, errno));
+			exit(janitor(NULL, data, errno));
 		}
 		parsercore(cmd, data, 1);
 	}
 	close_pipes(pipe_write, pipe_read);
 	free(cmd);
 	if (child_pid == -1)
-		exit (janitor(NULL, data, errno));
+		exit(janitor(NULL, data, errno));
 }
 
-void			b_pipe(char *input, t_data *data)
-{	
-	int	i;
+static int	b_pipe_next(t_pipe *pipe_s, int fd[2], char *input, int i)
+{
 	int	len;
-	int	fd[2];
-	int	pipe_read;
-	int	pipe_ret;
-	int	next_pipe;
-	char	*cmd;
+
+	pipe_s->pipe_read = fd[0];
+	len = pipe_s->cmd_len + 1;
+	i += len;
+	pipe_s->cmd_len = cmd_len(input + i);
+	pipe_s->next_pipe = 1 * (input[i + pipe_s->cmd_len] == '|');
+	return (len);
+}
+
+void	b_pipe(char *input, t_data *data)
+{
+	t_pipe	pipe_s;	
+	int		i;
+	int		fd[2];
+	int		pipe_ret;
 
 	i = 0;
-	next_pipe = 1;
-	len = cmd_len(input);
-	pipe_read = -1;
-	while (next_pipe)
+	pipe_s.next_pipe = 1;
+	pipe_s.cmd_len = cmd_len(input);
+	pipe_s.pipe_read = -1;
+	while (pipe_s.next_pipe)
 	{
-		cmd = ft_substr(input, i, len);
+		pipe_s.cmd = ft_substr(input, i, pipe_s.cmd_len);
 		pipe_ret = pipe(fd);
 		if (pipe_ret == -1)
 		{
-			free(cmd);
-			exit(janitor(NULL, data, errno));	
+			free(pipe_s.cmd);
+			exit(janitor(NULL, data, errno));
 		}
-		pipe_cmd(cmd, fd[1], pipe_read, data);
-		pipe_read = fd[0];
-		i += len + 1;
-		len = cmd_len(input + i);
-		next_pipe = 1 * (input[i + len] == '|');
+		pipe_cmd(pipe_s.cmd, fd[1], pipe_s.pipe_read, data);
+		i += b_pipe_next(&pipe_s, fd, input, i);
 	}
-	cmd = ft_substr(input, i, len);
-	pipe_cmd(cmd, -1, pipe_read, data);
+	pipe_s.cmd = ft_substr(input, i, pipe_s.cmd_len);
+	pipe_cmd(pipe_s.cmd, -1, pipe_s.pipe_read, data);
 	parent_waits(data);
 }

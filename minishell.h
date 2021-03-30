@@ -10,13 +10,20 @@
 # include <dirent.h>
 # include "libft.h"
 # include <fcntl.h>
-#include <stdio.h> //borrar
 
 typedef struct	s_token
 {
-	char	*token_str;
+	char	*str;
 	int		info;
 }				t_token;
+
+typedef struct	s_pipe
+{
+	char	*cmd;
+	int		cmd_len;
+	int		pipe_read;
+	int		next_pipe;
+}				t_pipe;
 
 typedef	struct	s_data
 {
@@ -88,5 +95,7 @@ char	*expand_and_control(char *str, t_data *data);
 int		stringcount(char *str);
 char	*copy_literal(char *str, int quote);
 char	*copy_word(char *src);
+int		cmd_len(char *input);
+int		parser_err_msg(char *token);
 
 #endif

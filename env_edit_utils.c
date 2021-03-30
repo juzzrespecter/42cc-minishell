@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static char		**export_new_env(char **env, char *id)
+static char	**export_new_env(char **env, char *id)
 {
 	char	*new_id;
 	char	**new_env;
@@ -15,7 +15,8 @@ static char		**export_new_env(char **env, char *id)
 		return (NULL);
 	while (env[i])
 	{
-		if ((new_env[i] = ft_strdup(env[i])) == NULL)
+		new_env[i] = ft_strdup(env[i]);
+		if (new_env[i] == NULL)
 		{
 			free_env(new_env);
 			return (NULL);
@@ -26,31 +27,34 @@ static char		**export_new_env(char **env, char *id)
 	return (new_env);
 }
 
-int				env_add_id(char *id, t_data *data)
+int	env_add_id(char *id, t_data *data)
 {
-	int	i;
+	int		i;
 	char	**new_env;
 
 	i = 0;
 	if (ft_strrchr(id, '=') == NULL)
-			return (0);
+		return (0);
 	while (data->env[i])
 	{
-		if (ft_strncmp(data->env[i], id, (ft_strrchr(id, '=') - id + 1)) == 0)	
+		if (ft_strncmp(data->env[i], id, (ft_strrchr(id, '=') - id + 1)) == 0)
 		{
 			data->env[i] = ft_strdup(id);
-			return (data->env[i] ? 0 : -1);
+			if (!data->env[i])
+				return (-1);
+			return (0);
 		}
 		i++;
 	}
-	if ((new_env = export_new_env(data->env, id)) == NULL)
+	new_env = export_new_env(data->env, id);
+	if (new_env == NULL)
 		return (-1);
 	free_env(data->env);
 	data->env = new_env;
 	return (0);
 }
 
-int				env_parse_id(char *id)
+int	env_parse_id(char *id)
 {
 	int	i;
 

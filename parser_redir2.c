@@ -96,6 +96,8 @@ void	redir_from(char *str, int i, char **input, t_data *data)
 	if (str[j + 1] == ' ')
 		j++;
 	filename = get_filename(&(str[j + 1]), &j, data);
+	if (!filename)
+		return ;
 	remove_redir_input(input, i, j);
 	fd = open(filename, O_RDONLY);
 	free(filename);

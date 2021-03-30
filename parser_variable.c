@@ -17,7 +17,7 @@ static char	*copy_variable(char *input, int var_len, int quote, char **env)
 	return (var_on_env);
 }
 
-static char		*concat_variable(char *input, char *var, int input_pos)
+static char	*concat_variable(char *input, char *var, int input_pos)
 {
 	char	*new_input;
 	char	*aux_input;
@@ -35,7 +35,7 @@ static char		*concat_variable(char *input, char *var, int input_pos)
 	return (new_input);
 }
 
-static int		expand_exit_status(char **input_ptr, int var_pos)
+static int	expand_exit_status(char **input_ptr, int var_pos)
 {
 	char	*new_input;
 	char	*aux_input;
@@ -57,7 +57,7 @@ static int		expand_exit_status(char **input_ptr, int var_pos)
 	return (!new_input ? -1 : 1);
 }
 
-static int		parser_variable(char **input_ptr, int var_pos, int quote, t_data *data)
+static int	parser_variable(char **input_ptr, int var_pos, int quote, t_data *data)
 {
 	int		var_len;
 	int		len;
@@ -85,7 +85,7 @@ static int		parser_variable(char **input_ptr, int var_pos, int quote, t_data *da
 	return (len);
 }
 
-char			*expand_variables(char *input, t_data *data)
+char	*expand_variables(char *input, t_data *data)
 {
 	int		i;
 	int		var_out;

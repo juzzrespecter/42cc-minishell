@@ -1,28 +1,8 @@
 #include "minishell.h"
-# define WORD 1 
-# define PIPE 2
-# define REDIR 3
-# define SEMICOLON 4
-
-static int	parser_err_msg(char *token)
-{
-	char	*err_msg;
-	char	*aux_str;
-
-	if (token == NULL)
-		return (print_error(NULL, NULL, strerror(errno), errno + 128));
-	err_msg = ft_strjoin("syntax error near unexpected token `", token);
-	free(token);
-	if (err_msg == NULL)
-		return (print_error(NULL, NULL, strerror(errno), errno + 128));
-	aux_str = err_msg;
-	err_msg = ft_strjoin(err_msg, "\'");
-	if (err_msg == NULL)
-		return (print_error(NULL, NULL, strerror(errno), errno + 128));
-	print_error(NULL, NULL, err_msg, 258);
-	free(err_msg);
-	return (258);
-}
+#define WORD 1 
+#define PIPE 2
+#define REDIR 3
+#define SEMICOLON 4
 
 static int	parser_word(char *input, int token_len, t_token *prev_token)
 {
@@ -64,7 +44,7 @@ static int	parser_ctrl(char *input, int token_len, t_token *prev_token)
 	if (token_str == NULL)
 		return (print_error(NULL, NULL, strerror(errno), errno + 128));
 	token_info = parser_ctrl_info(input[0]);
-	if (token_info == REDIR && prev_token->info == REDIR) 
+	if (token_info == REDIR && prev_token->info == REDIR)
 		return (parser_err_msg(token_str));
 	if ((token_info == SEMICOLON || token_info == PIPE) \
 			&& prev_token->info != WORD)

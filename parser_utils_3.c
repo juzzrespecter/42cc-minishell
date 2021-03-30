@@ -1,6 +1,22 @@
 #include "minishell.h"
 
-static int		copy_literal_len(char *src, int quote)
+int	cmd_len(char *input)
+{
+	int	len;
+	int	quote_ctrl;
+
+	len = 0;
+	quote_ctrl = 0;
+	while ((quote_ctrl != 0 || !(input[len] == '\n' || \
+					input[len] == ';' || input[len] == '|')) && input[len])
+	{
+		quote_ctrl = is_quote(input[len], quote_ctrl);
+		len++;
+	}
+	return (len);
+}
+
+static int	copy_literal_len(char *src, int quote)
 {
 	int	i;
 	int	len;
@@ -47,7 +63,7 @@ char	*copy_literal(char *src, int quote)
 	return (value);
 }
 
-int		copy_word_len(char *src)
+static int	copy_word_len(char *src)
 {
 	int		len;
 	int		i;

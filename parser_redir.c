@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void		make_filename(char *src, char *dst, int i, int k)
+void	make_filename(char *src, char *dst, int i, int k)
 {
 	while (src[i] != ' ' && src[i])
 	{
@@ -26,7 +26,7 @@ void		make_filename(char *src, char *dst, int i, int k)
 	dst[k] = '\0';
 }
 
-char		*get_filename(char *str, int *j, t_data *data)
+char	*get_filename(char *str, int *j, t_data *data)
 {
 	int		i;
 	int		k;
@@ -41,7 +41,7 @@ char		*get_filename(char *str, int *j, t_data *data)
 	return (filename);
 }
 
-void		remove_redir_input(char **input_address, int i, int j)
+void	remove_redir_input(char **input_address, int i, int j)
 {
 	char *tmp;
 	char *new_input;
@@ -53,7 +53,7 @@ void		remove_redir_input(char **input_address, int i, int j)
 	*input_address = new_input;
 }
 
-void		parser_redir_quotes(char *str, int *i, char quote)
+void	parser_redir_quotes(char *str, int *i, char quote)
 {
 	int slash_count;
 
@@ -71,7 +71,7 @@ void		parser_redir_quotes(char *str, int *i, char quote)
 	}
 }
 
-int			parser_redir(char **input_address, t_data *data)
+int	parser_redir(char **input_address, t_data *data)
 {
 	int		i;
 	char	*str;

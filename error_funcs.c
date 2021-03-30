@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int		janitor(char **argv, t_data *data, int err_code)
+int	janitor(char **argv, t_data *data, int err_code)
 {
 	int	i;
 	int	exit_status;
@@ -34,7 +34,7 @@ void	free_inputs(char **inputs)
 	free(inputs);
 }
 
-int		print_error(char *cmd, char *arg, char *err_msg, int exit_code)
+int	print_error(char *cmd, char *arg, char *err_msg, int exit_code)
 {
 	write(2, "bash: ", 6);
 	if (cmd != NULL)
@@ -51,4 +51,24 @@ int		print_error(char *cmd, char *arg, char *err_msg, int exit_code)
 	write(2, "\n", 1);
 	g_status = exit_code;
 	return (exit_code);
+}
+
+int	parser_err_msg(char *token)
+{
+	char	*err_msg;
+	char	*aux_str;
+
+	if (token == NULL)
+		return (print_error(NULL, NULL, strerror(errno), errno + 128));
+	err_msg = ft_strjoin("syntax error near unexpected token `", token);
+	free(token);
+	if (err_msg == NULL)
+		return (print_error(NULL, NULL, strerror(errno), errno + 128));
+	aux_str = err_msg;
+	err_msg = ft_strjoin(err_msg, "\'");
+	if (err_msg == NULL)
+		return (print_error(NULL, NULL, strerror(errno), errno + 128));
+	print_error(NULL, NULL, err_msg, 258);
+	free(err_msg);
+	return (258);
 }
