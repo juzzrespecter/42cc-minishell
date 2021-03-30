@@ -1,9 +1,9 @@
 #include "minishell.h"
 
-static int		export_print(t_data *data)
+static int	export_print(t_data *data)
 {
 	int		i;
-	int 	j;
+	int		j;
 	char	*value;
 
 	i = 0;
@@ -23,11 +23,12 @@ static int		export_print(t_data *data)
 	return (0);
 }
 
-int			b_export(char **argv, t_data *data)
+int	b_export(char **argv, t_data *data)
 {
 	int		i;
-	int		err_status;
-	err_status = 0;
+	int		err;
+
+	err = 0;
 	i = 0;
 	if (argv[1] == NULL)
 		return (export_print(data));
@@ -39,8 +40,8 @@ int			b_export(char **argv, t_data *data)
 				return (errno + 128);
 		}
 		else
-			err_status = print_error(argv[0], argv[i], "not a valid identifier", 1);
+			err = print_error(argv[0], argv[i], "not a valid identifier", 1);
 		i++;
 	}
-	return (err_status);
+	return (err);
 }

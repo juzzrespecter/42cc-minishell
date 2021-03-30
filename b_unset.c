@@ -1,6 +1,8 @@
 #include "minishell.h"
 
-static char	**unset_rm_id(char *id, char **env)
+
+
+static char	**b_unset_rm_id(char *id, char **env)
 {
 	int		i;
 	int		j;
@@ -31,7 +33,7 @@ static char	**unset_rm_id(char *id, char **env)
 	return (new_env);
 }
 
-static int	unset_id_in_env(char *id, char **env)
+static int	b_unset_id_in_env(char *id, char **env)
 {                                              
 	int	i;
 	int	id_len;
@@ -47,29 +49,30 @@ static int	unset_id_in_env(char *id, char **env)
 	return (1); 
 }
 
-int			b_unset(char **argv, t_data *data)
+int	b_unset(char **argv, t_data *data)
 {
 	int		i;
-	int		err_status; 
+	int		err; 
 	char	**new_env;
 
 	i = 0;
-	err_status = 0;
+	err = 0;
 	while (argv[i + 1])
 	{
 		if (env_parse_id(argv[i + 1]) == 0)	
 		{
-			if (unset_id_in_env(argv[i + 1], data->env) == 0)
+			if (b_unset_id_in_env(argv[i + 1], data->env) == 0)
 			{
-				if ((new_env = unset_rm_id(argv[i + 1], data->env)) == NULL)
-					return (errno + 128); 
+				new_env = b_unset_rm_id(argv[i + 1], data->env);
+				if (new_env == NULL)
+					return (print_error(NULL, NULL, strerror(errno), errno + 128)); 
 				free_env(data->env);
 				data->env = new_env;
 			}
 		}
 		else
-			err_status = print_error(argv[0], argv[i], "not a valid identifier", 1);
+			err = print_error(argv[0], argv[i], "not a valid identifier", 1);
 		i++;
 	}
-	return (err_status);
+	return (err);
 }

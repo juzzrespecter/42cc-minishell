@@ -40,13 +40,13 @@ void	redir_to(char *str, int i, char **input, t_data *data)
 		j++;
 	filename = get_filename(&(str[j + 1]), &j, data);
 	if (!filename)
-		return;
+		return ;
 	remove_redir_input(input, i, j);
 	fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
 	free(filename);
 	if (fd < 0)
 	{
-		g_status = print_error(NULL, NULL, strerror(errno), 1);
+		print_error(NULL, NULL, strerror(errno), 1);
 		data->redir = 0;
 		return ;
 	}
@@ -75,7 +75,7 @@ void	redir_to_append(char *str, int i, char **input, t_data *data)
 	free(filename);
 	if (fd < 0)
 	{
-		g_status = print_error(NULL, NULL, strerror(errno), 1);
+		print_error(NULL, NULL, strerror(errno), 1);
 		data->redir = 0;
 		return ;
 	}
@@ -101,8 +101,7 @@ void	redir_from(char *str, int i, char **input, t_data *data)
 	free(filename);
 	if (fd < 0)
 	{
-		ft_putstr_fd("Error: Wrong file name or wrong permissions\n", 2);
-		g_status = 1;
+		print_error(NULL, NULL, strerror(errno), 1);
 		data->redir = 0;
 		return ;
 	}

@@ -1,5 +1,4 @@
 #include "minishell.h"
-#include <stdio.h>
 
 static int		copy_literal_len(char *src, int quote)
 {
@@ -57,7 +56,8 @@ int		copy_word_len(char *src)
 	quote_ctrl = 0;
 	len = 0;
 	i = 0;
-
+	while (is_blank(src[i]))
+		i++;
 	while (src[i] && !(is_blank(src[i]) && quote_ctrl == 0))
 	{
 		if (quote_ctrl != is_quote(src[i], quote_ctrl))
@@ -67,11 +67,12 @@ int		copy_word_len(char *src)
 		}
 		else
 		{
+			if (quote_ctrl == 3)
+				quote_ctrl = 0;
 			i++;
 			len++;
 		}
 	}
-	printf("len: (%d)\n", len);
 	return (len);
 }
 
@@ -88,19 +89,20 @@ char	*copy_word(char *src)
 	dst = (char *)malloc(sizeof(char) * (copy_word_len(src)));
 	if (dst == NULL)
 		return (NULL);
+	while (is_blank(src[i]))
+		i++;
 	while (src[i] && !(is_blank(src[i]) && quote_ctrl == 0))
 	{
-		if (quote_ctrl != is_quote(src[i], quote_ctrl))
-		{
+		if (quote_ctrl != is_quote(src[i], quote_ctrl) && quote_ctrl != 3)
 			quote_ctrl = is_quote(src[i], quote_ctrl);
-			i++;
-		}
 		else
 		{
+			if (quote_ctrl == 3)
+				quote_ctrl = 0;
 			dst[j] = src[i];
-			i++;
 			j++;
 		}
+		i++;
 	}
 	dst[j] = 0;
 	return (dst);

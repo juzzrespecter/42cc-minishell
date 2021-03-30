@@ -38,7 +38,6 @@ char		*get_filename(char *str, int *j, t_data *data)
 	k = 0;
 	filename = ft_substr(str, 0, is_word(str));
 	filename = expand_and_control(filename, data);
-	filename = copy_word(filename);
 	return (filename);
 }
 

@@ -21,7 +21,7 @@ static int	select_from_builtins(char **inputs, t_data *data)
 	return (1);
 }
 
-void		select_cmd(char **inputs, t_data *data)
+void	select_cmd(char **inputs, t_data *data)
 {
 	int		wait_status;
 	int		builtin_true;
@@ -45,7 +45,7 @@ void		select_cmd(char **inputs, t_data *data)
 	}
 }
 
-void		close_fds(t_data *data)
+void	close_fds(t_data *data)
 {
 	if (data->fd_in != 0)
 	{

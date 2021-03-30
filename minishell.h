@@ -10,6 +10,7 @@
 # include <dirent.h>
 # include "libft.h"
 # include <fcntl.h>
+#include <stdio.h> //borrar
 
 typedef struct	s_token
 {
