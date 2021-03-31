@@ -92,8 +92,6 @@ static int	copy_word_len(char *src)
 	return (len);
 }
 
-// no funca
-
 char	*copy_word(char *src)
 {
 	char	*dst;
