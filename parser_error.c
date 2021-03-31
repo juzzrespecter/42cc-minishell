@@ -4,57 +4,69 @@
 #define REDIR 3
 #define SEMICOLON 4
 
-static int	parser_word(char *input, int token_len, t_token *prev_token)
+static int	parser_err_ctrl(char *input, t_token *prv_token, char *str)
 {
-	char	*token_str;
-	int		next_char;
-	int		fd_true;
+	int	token_info;
 
-	if (prev_token->token_str != NULL)
-		free(prev_token->token_str);
-	token_str = ft_substr(input, 0, token_len);
-	if (token_str == NULL)
-		return (print_error(NULL, NULL, strerror(errno), errno + 128));
-	next_char = 1 * (input[token_len] == '>' || input[token_len] == '<');
+	if (input[0] == ';')
+		token_info = SEMICOLON;
+	if (input[0] == '>' || input[0] == '<')
+		token_info = REDIR;
+	if (input[0] == '|')
+		token_info = PIPE;
+	if (token_info == REDIR && prv_token->info == REDIR)
+		return (parser_err_msg(str));
+	if ((token_info == SEMICOLON || token_info == PIPE) && \
+			prv_token->info != WORD)
+		return (parser_err_msg(str));
+	prv_token->info = token_info;
+	return (0);
+}
+
+static int	parser_err_word(char *input, t_token *prv_token, char *str, int len)
+{
+	int	next_char;
+	int	fd_true;
+
+	next_char = 1 * (input[len] == '>' || input[len] == '<');
 	fd_true = is_fd(input);
-	if ((next_char && fd_true && (prev_token->info == REDIR)))
-		return (parser_err_msg(token_str));
-	prev_token->info = WORD;
-	prev_token->token_str = token_str;
+	if ((next_char && fd_true && (prv_token->info == REDIR)))
+		return (parser_err_msg(str));
+	prv_token->info = WORD;
 	return (0);
 }
 
-static int	parser_ctrl_info(char input)
+static int	parser_err_token(char *input, int len, t_token *prv_token, int id)
 {
-	if (input == ';')
-		return (SEMICOLON);
-	if (input == '>' || input == '<')
-		return (REDIR);
-	return (PIPE);
-}
+	char	*str;
+	int		parser_out;
 
-static int	parser_ctrl(char *input, int token_len, t_token *prev_token)
-{
-	char	*token_str;
-	int		token_info;
-
-	if (prev_token->token_str != NULL)
-		free(prev_token->token_str);
-	token_str = ft_substr(input, 0, token_len);
-	if (token_str == NULL)
+	if (prv_token->str != NULL)
+		free(prv_token->str);
+	str = ft_substr(input, 0, len);
+	if (str == NULL)
 		return (print_error(NULL, NULL, strerror(errno), errno + 128));
-	token_info = parser_ctrl_info(input[0]);
-	if (token_info == REDIR && prev_token->info == REDIR)
-		return (parser_err_msg(token_str));
-	if ((token_info == SEMICOLON || token_info == PIPE) \
-			&& prev_token->info != WORD)
-		return (parser_err_msg(token_str));
-	prev_token->info = token_info;
-	prev_token->token_str = token_str;
-	return (0);
+	if (id == 1)
+		parser_out = parser_err_ctrl(input, prv_token, str);
+	else
+		parser_out = parser_err_word(input, prv_token, str, len);
+	prv_token->str = str;
+	return (parser_out);
 }
 
-int			parser_error(char *input)
+static int	parser_err_exit(t_token *token)
+{
+	int	ret_value;
+
+	ret_value = 0;
+	if (token->info != SEMICOLON && token->info != WORD && token->info != 0)
+		ret_value = parser_err_msg(token->str);
+	if (token->str != NULL)
+		free(token->str);
+	return (ret_value);
+}
+
+int	parser_error(char *input)
 {
 	int		i;
 	int		token_len;
@@ -62,32 +74,23 @@ int			parser_error(char *input)
 	t_token	token;
 
 	i = 0;
-	token.info = 0;
-	token.token_str = NULL;
+	ft_memset(&token, 0, sizeof(t_token));
+	parser_out = 0;
 	while (input[i])
 	{
 		token_len = is_word(input + i);
 		if (token_len > 0)
+			parser_out = parser_err_token(input + i, token_len, &token, 0);
+		else
 		{
-			parser_out = parser_word(input + i, token_len, &token);
-			if (parser_out != 0)
-				return (parser_out);
-			i += token_len;
+			token_len = is_ctrl_op(input + i);
+			if (token_len > 0)
+				parser_out = parser_err_token(input + i, token_len, &token, 1);
 		}
-		token_len = is_ctrl_op(input + i);
-		if (token_len > 0)
-		{
-			parser_out = parser_ctrl(input + i, token_len, &token);
-			if (parser_out != 0)
-				return (parser_out);
-			i += token_len;
-		}
+		if (parser_out != 0)
+			return (parser_out);
+		i += token_len;
 		i += is_blank(input[i]);
 	}
-	if (token.info != SEMICOLON && token.info != WORD && token.info != 0)
-		return (parser_err_msg(token.token_str));
-	if (token.token_str != NULL)
-		free(token.token_str);
-	return (0);
+	return (parser_err_exit(&token));
 }
- 
