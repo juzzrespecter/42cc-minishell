@@ -81,7 +81,7 @@ void	redir_to(char *str, int i, char **input, t_data *data);
 int		get_name_len(char *str);
 int		b_unset(char **argv, t_data *data);
 int		b_export(char **argv, t_data *data);
-int		b_echo(char **argv);
+void	b_echo(char **argv);
 int		b_cd(char **argv, t_data *data);
 int		env_parse_id(char *id);
 int		env_add_id(char *id, t_data *data);

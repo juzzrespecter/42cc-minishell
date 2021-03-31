@@ -6,7 +6,7 @@
 #    By: danrodri <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/06 15:49:46 by danrodri          #+#    #+#              #
-#    Updated: 2021/03/05 16:08:54 by danrodri         ###   ########.fr        #
+#    Updated: 2021/03/31 21:43:49 by danrodri         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,6 +61,7 @@ SRCS		= ft_memset.c \
 			  ft_lstmap.c \
 			  ft_lstlast.c \
 			  ft_split_str.c \
+			  ft_strcmp.c \
 			  get_next_line.c
 
 SRCS_DIR	= ./srcs/

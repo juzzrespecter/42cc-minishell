@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/06 17:46:15 by danrodri          #+#    #+#             */
-/*   Updated: 2021/03/31 18:54:55 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 21:43:25 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,6 @@ void			ft_putstr(char *str);
 char			*ft_lltoa_base(long long int i, char *base);
 char			**ft_split_str(char *s, char *sep);
 int				get_next_line(int fd, char **line);
+int				ft_strcmp(const char *str1, const char *str2);
 
 #endif
