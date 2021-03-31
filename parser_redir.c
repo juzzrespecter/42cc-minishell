@@ -43,8 +43,8 @@ char	*get_filename(char *str, int *j, t_data *data)
 
 void	remove_redir_input(char **input_address, int i, int j)
 {
-	char *tmp;
-	char *new_input;
+	char	*tmp;
+	char	*new_input;
 
 	tmp = ft_substr(input_address[0], 0, i);
 	new_input = ft_strjoin(tmp, &(input_address[0][j + 1]));
@@ -55,7 +55,7 @@ void	remove_redir_input(char **input_address, int i, int j)
 
 void	parser_redir_quotes(char *str, int *i, char quote)
 {
-	int slash_count;
+	int	slash_count;
 
 	while (str[*i] != quote)
 	{

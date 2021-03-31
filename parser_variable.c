@@ -1,11 +1,13 @@
 #include "minishell.h"
+#include <stdio.h>
 
 static char	*copy_variable(char *input, int var_len, int quote, char **env)
 {
-	char *var_on_input;
-	char *var_on_env;
+	char	*var_on_input;
+	char	*var_on_env;
 
-	if (!(var_on_input = (char *)malloc(sizeof(char) * (var_len + 1))))
+	var_on_input = (char *)malloc(sizeof(char) * (var_len + 1));
+	if (!var_on_input)
 		return (NULL);
 	ft_strlcpy(var_on_input, input, var_len + 1);
 	var_on_env = search_env(env, var_on_input);
@@ -22,7 +24,8 @@ static char	*concat_variable(char *input, char *var, int input_pos)
 	char	*new_input;
 	char	*aux_input;
 
-	if (!(new_input = ft_strdup(input)))
+	new_input = ft_strdup(input);
+	if (!new_input)
 		return (NULL);
 	aux_input = new_input;
 	new_input = ft_strjoin(new_input, var);
@@ -42,7 +45,8 @@ static int	expand_exit_status(char **input_ptr, int var_pos)
 	char	*input;
 
 	input = *input_ptr;
-	if (!(new_input = ft_itoa(g_status)))
+	new_input = ft_itoa(g_status);
+	if (!new_input)
 		return (-1);
 	input[var_pos - 1] = 0;
 	aux_input = new_input;
@@ -54,10 +58,12 @@ static int	expand_exit_status(char **input_ptr, int var_pos)
 	new_input = ft_strjoin(new_input, input + var_pos + 1);
 	free(aux_input);
 	*input_ptr = new_input;
-	return (!new_input ? -1 : 1);
+	if (!new_input)
+		return (-1);
+	return (1);
 }
 
-static int	parser_variable(char **input_ptr, int var_pos, int quote, t_data *data)
+static int	parser_variable(char **input_ptr, int pos, int quote, t_data *data)
 {
 	int		var_len;
 	int		len;
@@ -65,18 +71,19 @@ static int	parser_variable(char **input_ptr, int var_pos, int quote, t_data *dat
 	char	*new_input;
 	char	*input;
 
-	var_pos++;
+	pos++;
 	input = *input_ptr;
-	if (input[var_pos] == '?')
-		return (expand_exit_status(input_ptr, var_pos));
-	var_len = is_var(input + var_pos);
+	if (input[pos] == '?')
+		return (expand_exit_status(input_ptr, pos));
+	var_len = is_var(input + pos);
 	if (var_len == 0)
 		return (1);
-	if (!(var = copy_variable(input + var_pos, var_len, quote, data->env)))
+	var = copy_variable(input + pos, var_len, quote, data->env);
+	if (!var)
 		return (-1);
-	input[var_pos - 1] = 0;
+	input[pos - 1] = 0;
 	len = ft_strlen(var);
-	new_input = concat_variable(input, var, var_len + var_pos);
+	new_input = concat_variable(input, var, var_len + pos);
 	free(var);
 	if (!new_input)
 		return (-1);
@@ -90,25 +97,23 @@ char	*expand_variables(char *input, t_data *data)
 	int		i;
 	int		var_out;
 	int		quote_ctrl;
-	char	*new_input;
+	int		slash;
 
 	i = 0;
 	quote_ctrl = 0;
-	new_input = ft_strdup(input);
-	free(input);
-	if (!new_input)
-		return (NULL);
-	while (new_input[i])
+	slash = 0;
+	while (input[i])
 	{
-		quote_ctrl = is_quote(new_input[i], quote_ctrl);
-		if (new_input[i] == '$' && ((quote_ctrl % 2) == 0))
+		quote_ctrl = is_quote(input[i], quote_ctrl);
+		if (input[i] == '$' && ((quote_ctrl % 2) == 0) && slash == 0)
 		{
-			var_out = parser_variable(&new_input, i, quote_ctrl, data);
+			var_out = parser_variable(&input, i, quote_ctrl, data);
 			if (var_out == -1)
 				return (NULL);
 			i += var_out;
 		}
+		slash = 1 * ((input[i] == '\\' && quote_ctrl == 2));
 		i++;
 	}
-	return (new_input);
+	return (input);
 }

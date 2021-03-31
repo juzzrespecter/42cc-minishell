@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/09 19:35:30 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/11 15:00:09 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:38:28 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_lstadd_back(t_list **alst, t_list *new)
 {
-	t_list *lst;
+	t_list	*lst;
 
 	lst = *alst;
 	if (!lst)

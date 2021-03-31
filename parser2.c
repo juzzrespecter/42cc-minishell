@@ -2,10 +2,10 @@
 
 int	parser_pipe(char *input, t_data *data)
 {
-	char *new_input;
+	char	*new_input;
 	pid_t	pipe_pid;
-	int	pipe_status;
-	int	pipe_end;
+	int		pipe_status;
+	int		pipe_end;
 
 	pipe_end = 0;
 	pipe_pid = fork();

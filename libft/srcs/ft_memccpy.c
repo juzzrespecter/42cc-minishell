@@ -6,16 +6,16 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/05 14:02:29 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/11 20:50:07 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:42:33 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <string.h>
+#include "libft.h" 
 
 void	*ft_memccpy(void *dst, const void *src, int c, size_t n)
 {
 	unsigned char		*sdst;
-	const unsigned char *ssrc;
+	const unsigned char	*ssrc;
 
 	sdst = dst;
 	ssrc = src;

@@ -2,7 +2,7 @@
 
 void	copy_inside_quotes(char **src, char **dst, char quote)
 {
-	int slash_count;
+	int	slash_count;
 
 	while (**src != quote)
 	{
@@ -55,7 +55,7 @@ static int	input_len(char *str)
 			str++;
 		else if (*str == '\t' && (*(str + 1) == '\t' || *(str + 1) == '\0'))
 			str++;
-		else if (*str == '\\' && (str += 2))
+		else if (*str == '\\' && (str += 2)) // !!
 			i += 4;
 		else if (*str == '"' || *str == '\'')
 		{

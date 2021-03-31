@@ -25,6 +25,13 @@ typedef struct	s_pipe
 	int		next_pipe;
 }				t_pipe;
 
+typedef struct	s_index
+{
+	int	i;
+	int	j;
+	int	quote;
+}				t_index;
+
 typedef	struct	s_data
 {
 	char	**env;

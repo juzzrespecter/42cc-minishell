@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/09 19:59:11 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/11 20:48:51 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:38:42 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ static void	ft_lstcleaner(t_list *lst, void (*del)(void *))
 	free(lst);
 }
 
-void		ft_lstclear(t_list **lst, void (*del)(void *))
+void	ft_lstclear(t_list **lst, void (*del)(void *))
 {
-	t_list *alst;
+	t_list	*alst;
 
 	alst = *lst;
 	ft_lstcleaner(alst, del);

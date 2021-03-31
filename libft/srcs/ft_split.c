@@ -6,14 +6,14 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 20:21:48 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/18 22:21:00 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:39:49 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <stdlib.h>
 
-static int		ft_tablen(char const *s, char c)
+static int	ft_tablen(char const *s, char c)
 {
 	int	len;
 	int	i;
@@ -33,7 +33,7 @@ static int		ft_tablen(char const *s, char c)
 	return (len);
 }
 
-static int		ft_slen(char const *s, char c, int i)
+static int	ft_slen(char const *s, char c, int i)
 {
 	int	len;
 
@@ -46,7 +46,7 @@ static int		ft_slen(char const *s, char c, int i)
 	return (len);
 }
 
-char			**ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c)
 {
 	char	**tab;
 	int		i;
@@ -54,7 +54,8 @@ char			**ft_split(char const *s, char c)
 
 	if (!s)
 		return (NULL);
-	if (!(tab = malloc(sizeof(char **) * ft_tablen(s, c))))
+	tab = malloc(sizeof(char **) * ft_tablen(s, c));
+	if (!tab)
 		return (NULL);
 	i = 0;
 	j = 0;

@@ -74,7 +74,7 @@ static char	*exec_no_slash(char *path_env, char **argv, t_data *data)
 	while (paths[i])
 	{
 		if (!stat(paths[i], &buff))
-			break;
+			break ;
 		i++;
 	}
 	if (!paths[i])

@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 21:01:24 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/18 21:29:35 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:31:58 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	char				*str;
-	unsigned int		i;
+	char			*str;
+	unsigned int	i;
 
 	if (!s)
 		return (NULL);
-	if (!(str = ft_strdup(s)))
+	str = ft_strdup(s);
+	if (!str)
 		return (NULL);
 	i = 0;
 	while (str[i])

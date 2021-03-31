@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 19:17:20 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/11 20:53:36 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:31:07 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*ft_strrchr(const char *s, int c)
 {
-	const char *lstoccr;
+	const char	*lstoccr;
 
 	lstoccr = NULL;
 	while (*s)

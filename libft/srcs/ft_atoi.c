@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 17:50:38 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/10 22:17:26 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:35:59 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ static int	ft_check_spaces(char c)
 	return (0);
 }
 
-int			ft_atoi(const char *str)
+int	ft_atoi(const char *str)
 {
-	int n;
-	int negativo;
+	int	n;
+	int	negativo;
 
 	negativo = 0;
 	n = 0;

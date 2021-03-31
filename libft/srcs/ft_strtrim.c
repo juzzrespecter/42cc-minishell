@@ -6,14 +6,14 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:52:36 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/19 18:36:37 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:30:53 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "libft.h"
 
-static int			ft_setmatch(char c, char const *set)
+static int	ft_setmatch(char c, char const *set)
 {
 	int	i;
 
@@ -27,7 +27,7 @@ static int			ft_setmatch(char c, char const *set)
 	return (0);
 }
 
-static size_t		ft_rtrim(char const *s1, char const *set)
+static size_t	ft_rtrim(char const *s1, char const *set)
 {
 	int	i;
 	int	r;
@@ -43,7 +43,7 @@ static size_t		ft_rtrim(char const *s1, char const *set)
 	return (r);
 }
 
-static size_t		ft_ltrim(char const *s1, char const *set)
+static size_t	ft_ltrim(char const *s1, char const *set)
 {
 	int	l;
 
@@ -53,7 +53,7 @@ static size_t		ft_ltrim(char const *s1, char const *set)
 	return (l);
 }
 
-char				*ft_strtrim(char const *s1, char const *set)
+char	*ft_strtrim(char const *s1, char const *set)
 {
 	char				*str;
 	unsigned int		l;

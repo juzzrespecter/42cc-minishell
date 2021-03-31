@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/05 15:54:29 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/11 20:52:59 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:33:53 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static size_t	ft_lenstr(const char *s)
 {
-	size_t len;
+	size_t	len;
 
 	len = 0;
 	while (s[len])
@@ -22,7 +22,7 @@ static size_t	ft_lenstr(const char *s)
 	return (len);
 }
 
-static char		*ft_cpystr(const char *s1, char *s2)
+static char	*ft_cpystr(const char *s1, char *s2)
 {
 	unsigned int	i;
 
@@ -36,7 +36,7 @@ static char		*ft_cpystr(const char *s1, char *s2)
 	return (s2);
 }
 
-char			*ft_strdup(const char *s1)
+char	*ft_strdup(const char *s1)
 {
 	char			*copy;
 

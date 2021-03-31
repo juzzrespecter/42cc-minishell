@@ -6,107 +6,75 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/25 18:14:54 by danrodri          #+#    #+#             */
-/*   Updated: 2021/02/22 17:18:03 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 20:02:07 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	find_newline(char *str)
+static int	get_next_backup(int fd, char **line, char **backup)
 {
-	int	nl_pos;
-
-	nl_pos = 0;
-	while (str[nl_pos])
+	if (fd < 0 || !line || !BUFFER_SIZE)
+		return (-1);
+	if (backup[fd])
 	{
-		if (str[nl_pos] == '\n')
-			return (nl_pos);
-		nl_pos++;
+		*line = ft_strdup(backup[fd]);
+		ft_bzero(backup[fd], ft_strlen(backup[fd]));
+		free(backup[fd]);
+		backup[fd] = NULL;
 	}
+	else
+		*line = ft_strdup("");
+	if (!*line)
+		return (-1);
+	return (0);
+}
+
+static int	free_and_exit(char *str)
+{
+	free (str);
 	return (-1);
 }
 
-static void	remove_lines(char *lines[FD_SETSIZE], int fd)
+static int	get_out(int fd, char **line, char **backup, char *nl_pos)
 {
-	ft_bzero(lines[fd], BUFFER_SIZE + 1);
-	free(lines[fd]);
-	lines[fd] = NULL;
-}
-
-static int	save_line(int fd, char **line, char *lines[FD_SETSIZE], char *buff)
-{
-	int		nl_pos;
-	char	buff_aux[BUFFER_SIZE + 1];
-	char	*mem_free;
-
-	mem_free = *line;
-	if ((nl_pos = find_newline(buff)) != -1)
+	if (**line == 0)
+		return (0);
+	if (nl_pos != NULL)
 	{
-		if (!lines[fd])
-			if (!(lines[fd] = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
-				return (0);
-		ft_strlcpy(lines[fd], buff + nl_pos + 1, BUFFER_SIZE - nl_pos);
-		ft_strlcpy(buff_aux, buff, nl_pos + 1);
-		*line = ft_strjoin(*line, buff_aux);
-		if (!*lines[fd])
-			remove_lines(lines, fd);
-	}
-	else
-	{
-		*line = ft_strjoin(*line, buff);
-		if (lines[fd])
-			remove_lines(lines, fd);
-	}
-	free(mem_free);
-	return (*line ? 1 : 0);
-}
-
-static int	read_line(int fd, char **line, char *lines[FD_SETSIZE])
-{
-	int		nl_pos;
-	char	buffer[BUFFER_SIZE + 1];
-	int		r_out;
-
-	ft_bzero(buffer, BUFFER_SIZE + 1);
-	while ((nl_pos = find_newline(buffer)) == -1)
-	{
-		ft_bzero(buffer, BUFFER_SIZE + 1);
-		r_out = read(fd, buffer, BUFFER_SIZE);
-		if (!r_out)
-			return (0);
-		if (r_out < 0)
-			return (-1);
-		if (!save_line(fd, line, lines, buffer))
-			return (-1);
+		backup[fd] = ft_strdup(nl_pos + 1);
+		if (!backup[fd])
+			return (free_and_exit(*line));
+		ft_bzero(nl_pos, ft_strlen(nl_pos));
 	}
 	return (1);
 }
 
-int			get_next_line(int fd, char **line)
+int	get_next_line(int fd, char **line)
 {
-	static char	*lines[FD_SETSIZE] = {0};
-	char		buff_aux[BUFFER_SIZE + 1];
-	int			nl_pos;
+	static char	*backup[FD_SETSIZE] = {0};
+	char		buffer[BUFFER_SIZE + 1];
+	int			func_ret;
+	char		*nl_pos;
 
-	if (fd < 0 || !line || !BUFFER_SIZE)
+	func_ret = get_next_backup(fd, line, backup);
+	if (func_ret == -1)
 		return (-1);
-	if (!(*line = ft_strdup("")))
-		return (-1);
-	if (lines[fd])
+	nl_pos = ft_strchr(*line, '\n');
+	while (nl_pos == NULL)
 	{
-		free(*line);
-		if ((nl_pos = find_newline(lines[fd])) >= 0)
-		{
-			ft_strlcpy(buff_aux, lines[fd], nl_pos + 1);
-			ft_strlcpy(lines[fd], lines[fd] + nl_pos + 1, BUFFER_SIZE - nl_pos);
-			*line = ft_strdup(buff_aux);
-			if (!*lines[fd])
-				remove_lines(lines, fd);
-			return (*line ? 1 : -1);
-		}
-		if (!(*line = ft_strdup(lines[fd])))
-			return (-1);
-		remove_lines(lines, fd);
+		ft_bzero(buffer, BUFFER_SIZE + 1);
+		func_ret = read(fd, buffer, BUFFER_SIZE);
+		if (func_ret < 0)
+			return (free_and_exit(*line));
+		if (func_ret == 0)
+			break ;
+		nl_pos = *line;
+		*line = ft_strjoin(*line, buffer);
+		if (!*line)
+			return (free_and_exit(nl_pos));
+		free(nl_pos);
+		nl_pos = ft_strchr(*line, '\n');
 	}
-	return (read_line(fd, line, lines));
+	return (get_out(fd, line, backup, nl_pos));
 }

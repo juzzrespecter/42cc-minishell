@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 13:15:06 by danrodri          #+#    #+#             */
-/*   Updated: 2019/11/18 19:00:18 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:43:05 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 		nlst = ft_lstnew(ft_strdup(lst->content));
 		if (!nlst)
 			return (NULL);
-		if (!(nlst->content = f(nlst->content)))
+		nlst->content = f(nlst->content);
+		if (!nlst)
 			del(nlst->content);
 		ft_lstadd_back(&alst, nlst);
 		lst = lst->next;

@@ -12,7 +12,7 @@ void	free_env(char **env)
 	free(env);
 }
 
-int		envlen(char **env)
+int	envlen(char **env)
 {
 	int	i;
 

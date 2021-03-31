@@ -18,7 +18,7 @@ void	data_init(t_data *data, char **env)
 	data->redir = 1;
 }
 
-int		main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	t_data	data;
 	int		ret;

@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-int		get_name_len(char *str)
+int	get_name_len(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while (str[i] != ' ' && str[i] != '|' && str[i] != ';' && str[i] != '>' &&
+	while (str[i] != ' ' && str[i] != '|' && str[i] != ';' && str[i] != '>' && \
 			str[i] != '<' && str[i])
 	{
 		if (str[i] == '\'')
