@@ -8,7 +8,10 @@ void	free_env(char **env)
 	i = 0;
 	env_len = envlen(env);
 	while (i < env_len)
-		free(env[i++]);
+	{
+		free(env[i]);
+		i++;
+	}
 	free(env);
 }
 

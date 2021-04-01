@@ -65,7 +65,7 @@ void	exit_pipe(t_data *data)
 	if (g_input)
 		free(g_input);
 	free(data->pwd);
-	exit(EXIT_SUCCESS);
+	exit(g_status);
 }
 
 int	parsercore(char *clean_input, t_data *data, int piped)

@@ -46,7 +46,7 @@ static void	pipe_cmd(char *cmd, int pipe_write, int pipe_read, t_data *data)
 			free(cmd);
 			exit(janitor(NULL, data, errno));
 		}
-		parsercore(cmd, data, 1);
+		exit(parsercore(cmd, data, 1));
 	}
 	close_pipes(pipe_write, pipe_read);
 	free(cmd);

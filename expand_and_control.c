@@ -34,14 +34,16 @@ char	*expand_and_control(char *str, t_data *data)
 	if (var_check == NULL)
 		return (str);
 	token = ft_strdup(str);
-	str_expanded = expand_variables(token, data);
+	str_expanded = expand_variables(str, data);
 	count = count_words(str_expanded);
 	if (count > 1)
 	{
 		data->redir = 0;
-		g_status = print_error(NULL, str, "ambiguous redirect", 1);
+		g_status = print_error(NULL, token, "ambiguous redirect", 1);
+		free(token);
 		return (NULL);
 	}
+	free(token);
 	filename = copy_word(str_expanded);
 	return (filename);
 }

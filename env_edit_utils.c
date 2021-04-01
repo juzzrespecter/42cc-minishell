@@ -2,7 +2,6 @@
 
 static char	**export_new_env(char **env, char *id)
 {
-	char	*new_id;
 	char	**new_env;
 	int		old_envlen;
 	int		i;
@@ -10,8 +9,7 @@ static char	**export_new_env(char **env, char *id)
 	i = 0;
 	old_envlen = envlen(env);
 	new_env = (char **)ft_calloc(old_envlen + 1, sizeof(char *));
-	new_id = ft_strdup(id);
-	if (new_env == NULL || new_id == NULL)
+	if (new_env == NULL)
 		return (NULL);
 	while (env[i])
 	{
@@ -23,7 +21,9 @@ static char	**export_new_env(char **env, char *id)
 		}
 		i++;
 	}
-	new_env[i] = new_id;
+	new_env[i] = ft_strdup(id);
+	if (new_env[i] == NULL)
+		return (NULL);
 	return (new_env);
 }
 

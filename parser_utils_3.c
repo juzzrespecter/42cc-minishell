@@ -25,7 +25,7 @@ static int	copy_literal_len(char *src, int quote)
 	len = 0;
 	while (src[i])
 	{
-		if (src[i] == '"' || (ft_strchr("\\$\'<>", src[i]) && !quote))
+		if (src[i] == '"' || (ft_strchr("\\$\'<>|;", src[i]) && !quote))
 			len += 2;
 		else
 			len++;

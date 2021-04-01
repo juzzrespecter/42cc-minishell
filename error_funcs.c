@@ -7,16 +7,18 @@ int	janitor(char **argv, t_data *data, int err_code)
 
 	i = 0;
 	exit_status = 0;
-	if (err_code == 127)
-		exit_status = print_error(argv[0], NULL, "command not found", err_code);
-	if (err_code == 2)
-		exit_status = print_error(argv[0], NULL, strerror(errno), 127);
-	if (err_code == 13)
-		exit_status = print_error(argv[0], NULL, strerror(errno), 126);
-	if (err_code != 2 && err_code != 13 && err_code != 127)
-		exit_status = print_error(argv[0], NULL, strerror(errno), errno + 128);
 	if (argv != NULL)
+	{
+		if (err_code == 127)
+			exit_status = print_error(argv[0], NULL, "command not found", err_code);
+		if (err_code == 2)
+			exit_status = print_error(argv[0], NULL, strerror(errno), 127);
+		if (err_code == 13)
+			exit_status = print_error(argv[0], NULL, strerror(errno), 126);
+		if (err_code != 0 && err_code != 2 && err_code != 13 && err_code != 127)
+			exit_status = print_error(argv[0], NULL, strerror(errno), errno + 128);
 		free_inputs(argv);
+	}
 	free_env(data->env);
 	return (exit_status);
 }
