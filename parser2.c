@@ -1,5 +1,20 @@
 #include "minishell.h"
 
+static int	move_pipe_end(char *input)
+{
+	int	pipe_len;
+	int	quote;
+
+	pipe_len = 0;
+	quote = 0;
+	while (input[pipe_len] && (!ft_strchr("|;", input[pipe_len]) || quote))
+	{
+		quote = is_quote(input[pipe_len], quote);
+		pipe_len++;
+	}
+	return (pipe_len);
+}
+
 int	parser_pipe(char *input, t_data *data)
 {
 	char	*new_input;
@@ -15,8 +30,7 @@ int	parser_pipe(char *input, t_data *data)
 		b_pipe(input, data);
 	waitpid(pipe_pid, &pipe_status, 0);
 	g_status = WEXITSTATUS(pipe_status);
-	while (input[pipe_end] && input[pipe_end] != ';' && input[pipe_end] != '\n')
-		pipe_end++;
+	pipe_end = move_pipe_end(input);
 	if (input[pipe_end])
 		pipe_end++;
 	new_input = ft_strdup(input + pipe_end);

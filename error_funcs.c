@@ -6,7 +6,7 @@ int	janitor(char **argv, t_data *data, int err_code)
 	int	stat;
 
 	i = 0;
-	stat = 0;
+	stat = err_code;
 	if (argv != NULL)
 	{
 		if (err_code == 127)

@@ -23,6 +23,7 @@ typedef struct s_pipe
 	int		cmd_len;
 	int		pipe_read;
 	int		next_pipe;
+	pid_t	child_pid;
 }				t_pipe;
 
 typedef struct s_index

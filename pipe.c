@@ -14,43 +14,43 @@ static int	close_pipes(int pipe_read, int pipe_write)
 	return (1 * ((close_read != -1 && close_write != -1)));
 }
 
-static void	parent_waits(t_data *data)
+static void	parent_waits(pid_t last_pid, t_data *data)
 {
 	int	wait_out;
 	int	wait_status;
 
+	waitpid(last_pid, &wait_status, 0);
 	wait_out = 1;
 	while (wait_out > 0)
-		wait_out = wait(&wait_status);
+		wait_out = wait(NULL);
 	exit(janitor(NULL, data, WEXITSTATUS(wait_status)));
 }
 
-static void	pipe_cmd(char *cmd, int pipe_write, int pipe_read, t_data *data)
+static void	pipe_cmd(t_pipe *pipe_s, int pipe_write, t_data *data)
 {
 	int		dup_wr;
 	int		dup_rd;
-	pid_t	child_pid;
 
 	dup_wr = 0;
 	dup_rd = 0;
-	child_pid = fork();
-	if (child_pid == 0)
+	pipe_s->child_pid = fork();
+	if (pipe_s->child_pid == 0)
 	{
 		if (pipe_write != -1)
 			dup_wr = dup2(pipe_write, STDOUT_FILENO);
-		if (pipe_read != -1)
-			dup_rd = dup2(pipe_read, STDIN_FILENO);
-		close_pipes(pipe_write, pipe_read);
+		if (pipe_s->pipe_read != -1)
+			dup_rd = dup2(pipe_s->pipe_read, STDIN_FILENO);
+		close_pipes(pipe_write, pipe_s->pipe_read);
 		if (dup_wr == -1 || dup_rd == -1)
 		{
-			free(cmd);
+			free(pipe_s->cmd);
 			exit(janitor(NULL, data, errno));
 		}
-		exit(parsercore(cmd, data, 1));
+		parsercore(pipe_s->cmd, data, 1);
 	}
-	close_pipes(pipe_write, pipe_read);
-	free(cmd);
-	if (child_pid == -1)
+	close_pipes(pipe_write, pipe_s->pipe_read);
+	free(pipe_s->cmd);
+	if (pipe_s->child_pid == -1)
 		exit(janitor(NULL, data, errno));
 }
 
@@ -86,10 +86,10 @@ void	b_pipe(char *input, t_data *data)
 			free(pipe_s.cmd);
 			exit(janitor(NULL, data, errno));
 		}
-		pipe_cmd(pipe_s.cmd, fd[1], pipe_s.pipe_read, data);
+		pipe_cmd(&pipe_s, fd[1], data);
 		i += b_pipe_next(&pipe_s, fd, input, i);
 	}
 	pipe_s.cmd = ft_substr(input, i, pipe_s.cmd_len);
-	pipe_cmd(pipe_s.cmd, -1, pipe_s.pipe_read, data);
-	parent_waits(data);
+	pipe_cmd(&pipe_s, -1, data);
+	parent_waits(pipe_s.child_pid, data);
 }

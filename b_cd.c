@@ -29,7 +29,7 @@ int	b_cd(char **argv, t_data *data)
 	if (path == NULL)
 		return (g_status);
 	if (chdir(path) == -1)
-		return (print_error(argv[0], path, strerror(errno), errno + 128));
+		return (print_error(argv[0], path, strerror(errno), 1));
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
 		return (print_error(argv[0], NULL, strerror(errno), errno + 128));
@@ -40,9 +40,9 @@ int	b_cd(char **argv, t_data *data)
 	free(data->pwd);
 	data->pwd = ft_strdup(pwd);
 	free(id);
+	free(pwd);
 	if (data->pwd == NULL || export_pwd_ret == -1)
 		return (print_error(argv[0], NULL, strerror(errno), errno + 128));
-	free(pwd);
 	g_status = 0;
 	return (0);
 }

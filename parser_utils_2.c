@@ -6,7 +6,7 @@ int	is_quote(char input, int quote)
 		return (quote * (quote != 2) + 2 * (quote == 0));
 	if (input == '\'')
 		return (quote * (quote != 1) + 1 * (quote == 0));
-	return (quote * (quote != 3) + 3 * (quote == 3 && input == '\\'));
+	return (quote * (quote != 3) + 3 * (quote == 0 && input == '\\'));
 }
 
 int	is_var(char *input)
@@ -22,13 +22,15 @@ int	is_var(char *input)
 int	is_word(char *input)
 {
 	int	i;
-	int	quote_ctrl;
+	int	quote;
 
 	i = 0;
-	quote_ctrl = 0;
-	while ((!ft_strrchr(";|\n\t\v\r<> ", input[i]) || quote_ctrl != 0) && input[i])
+	quote = 0;
+	while ((!ft_strchr(";|\n\t\v\r<> ", input[i]) || quote) && input[i])
 	{
-		quote_ctrl = is_quote(input[i], quote_ctrl);
+		if (input[i] == '\\' && input[i + 1] == '"' && quote == 2)
+			i += 2;
+		quote = is_quote(input[i], quote);
 		i++;
 	}
 	return (i);
