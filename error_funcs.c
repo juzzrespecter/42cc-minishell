@@ -3,24 +3,24 @@
 int	janitor(char **argv, t_data *data, int err_code)
 {
 	int	i;
-	int	exit_status;
+	int	stat;
 
 	i = 0;
-	exit_status = 0;
+	stat = 0;
 	if (argv != NULL)
 	{
 		if (err_code == 127)
-			exit_status = print_error(argv[0], NULL, "command not found", err_code);
+			stat = print_error(argv[0], NULL, "command not found", err_code);
 		if (err_code == 2)
-			exit_status = print_error(argv[0], NULL, strerror(errno), 127);
+			stat = print_error(argv[0], NULL, strerror(errno), 127);
 		if (err_code == 13)
-			exit_status = print_error(argv[0], NULL, strerror(errno), 126);
+			stat = print_error(argv[0], NULL, strerror(errno), 126);
 		if (err_code != 0 && err_code != 2 && err_code != 13 && err_code != 127)
-			exit_status = print_error(argv[0], NULL, strerror(errno), errno + 128);
+			stat = print_error(argv[0], NULL, strerror(errno), errno + 128);
 		free_inputs(argv);
 	}
 	free_env(data->env);
-	return (exit_status);
+	return (stat);
 }
 
 void	free_inputs(char **inputs)

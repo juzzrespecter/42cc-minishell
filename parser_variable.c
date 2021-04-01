@@ -1,5 +1,4 @@
 #include "minishell.h"
-#include <stdio.h>
 
 static char	*copy_variable(char *input, int var_len, int quote, char **env)
 {
@@ -97,23 +96,23 @@ char	*expand_variables(char *input, t_data *data)
 	int		i;
 	int		var_out;
 	int		quote_ctrl;
-	int		slash;
 
 	i = 0;
 	quote_ctrl = 0;
-	slash = 0;
 	while (input[i])
 	{
 		quote_ctrl = is_quote(input[i], quote_ctrl);
-		if (input[i] == '$' && ((quote_ctrl % 2) == 0) && slash == 0)
+		if (input[i] == '\\' && input[i + 1] == '$' && quote_ctrl == 2)
+			i += 2;
+		if (input[i] == '$' && ((quote_ctrl % 2) == 0))
 		{
 			var_out = parser_variable(&input, i, quote_ctrl, data);
 			if (var_out == -1)
 				return (NULL);
 			i += var_out;
 		}
-		slash = 1 * ((input[i] == '\\' && quote_ctrl == 2));
-		i++;
+		else
+			i++;
 	}
 	return (input);
 }

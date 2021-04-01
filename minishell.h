@@ -11,13 +11,13 @@
 # include "libft.h"
 # include <fcntl.h>
 
-typedef struct	s_token
+typedef struct s_token
 {
 	char	*str;
 	int		info;
 }				t_token;
 
-typedef struct	s_pipe
+typedef struct s_pipe
 {
 	char	*cmd;
 	int		cmd_len;
@@ -25,20 +25,20 @@ typedef struct	s_pipe
 	int		next_pipe;
 }				t_pipe;
 
-typedef struct	s_index
+typedef struct s_index
 {
 	int	i;
 	int	j;
 	int	quote;
 }				t_index;
 
-typedef	struct	s_data
+typedef struct s_data
 {
 	char	**env;
 	char	*pwd;
-	int	fd_in;
-	int	fd_out;
-	int	redir;
+	int		fd_in;
+	int		fd_out;
+	int		redir;
 }		t_data;
 
 int		g_status;
@@ -97,7 +97,7 @@ char	*expand_variables(char *input, t_data *data);
 int		exec_cmd(char **argv, t_data *data);
 int		janitor(char **argv, t_data *data, int err_code);
 void	b_pipe(char *input, t_data *data);
-int		print_error(char *cmd, char *arg , char *err_msg, int exit_code);
+int		print_error(char *cmd, char *arg, char *err_msg, int exit_code);
 char	*expand_and_control(char *str, t_data *data);
 int		stringcount(char *str);
 char	*copy_literal(char *str, int quote);

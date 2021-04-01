@@ -4,8 +4,8 @@ int	is_quote(char input, int quote)
 {
 	if (input == '\"')
 		return (quote * (quote != 2) + 2 * (quote == 0));
-	if (input == '\\')
-		return (quote * (quote != 3) + 3 * (quote == 0));
+	if (input == '\'')
+		return (quote * (quote != 1) + 1 * (quote == 0));
 	return (quote * (quote != 3) + 3 * (quote == 3 && input == '\\'));
 }
 
