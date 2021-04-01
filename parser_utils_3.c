@@ -48,7 +48,7 @@ char	*copy_literal(char *src, int quote)
 		return (NULL);
 	while (src[i])
 	{
-		if (src[i] == '"' || (ft_strchr("\\$\'<>", src[i]) && !quote))
+		if (src[i] == '"' || (ft_strchr("\\$\'<>|;", src[i]) && !quote))
 		{
 			value[j] = '\\';
 			j++;
