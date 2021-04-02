@@ -18,7 +18,6 @@ int	is_number(char *str)
 
 void	b_exit(char **inputs, t_data *data)
 {
-	g_status = 0;
 	if (inputs[1])
 	{
 		if (is_number(inputs[1]))
