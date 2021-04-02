@@ -7,7 +7,7 @@ static int	move_pipe_end(char *input)
 
 	pipe_len = 0;
 	quote = 0;
-	while (input[pipe_len] && (!ft_strchr("|;", input[pipe_len]) || quote))
+	while (input[pipe_len] && (!ft_strchr(";\n", input[pipe_len]) || quote))
 	{
 		quote = is_quote(input[pipe_len], quote);
 		pipe_len++;

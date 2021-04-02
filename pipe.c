@@ -1,16 +1,16 @@
 #include "minishell.h"
 
-static int	close_pipes(int pipe_read, int pipe_write)
+static int	close_pipes(t_pipe *pipe_s)
 {
 	int	close_read;
 	int	close_write;
 
 	close_read = 0;
 	close_write = 0;
-	if (pipe_read != -1)
-		close_read = close(pipe_read);
-	if (pipe_write != -1)
-		close_write = close(pipe_write);
+	if (pipe_s->pipe_read != -1)
+		close_read = close(pipe_s->pipe_read);
+	if (pipe_s->pipe_write != -1)
+		close_write = close(pipe_s->pipe_write);
 	return (1 * ((close_read != -1 && close_write != -1)));
 }
 
@@ -26,7 +26,7 @@ static void	parent_waits(pid_t last_pid, t_data *data)
 	exit(janitor(NULL, data, WEXITSTATUS(wait_status)));
 }
 
-static void	pipe_cmd(t_pipe *pipe_s, int pipe_write, t_data *data)
+static void	pipe_cmd(t_pipe *pipe_s, t_data *data)
 {
 	int		dup_wr;
 	int		dup_rd;
@@ -36,11 +36,11 @@ static void	pipe_cmd(t_pipe *pipe_s, int pipe_write, t_data *data)
 	pipe_s->child_pid = fork();
 	if (pipe_s->child_pid == 0)
 	{
-		if (pipe_write != -1)
-			dup_wr = dup2(pipe_write, STDOUT_FILENO);
+		if (pipe_s->pipe_write != -1)
+			dup_wr = dup2(pipe_s->pipe_write, STDOUT_FILENO);
 		if (pipe_s->pipe_read != -1)
 			dup_rd = dup2(pipe_s->pipe_read, STDIN_FILENO);
-		close_pipes(pipe_write, pipe_s->pipe_read);
+		close_pipes(pipe_s);
 		if (dup_wr == -1 || dup_rd == -1)
 		{
 			free(pipe_s->cmd);
@@ -48,7 +48,7 @@ static void	pipe_cmd(t_pipe *pipe_s, int pipe_write, t_data *data)
 		}
 		parsercore(pipe_s->cmd, data, 1);
 	}
-	close_pipes(pipe_write, pipe_s->pipe_read);
+	close_pipes(pipe_s);
 	free(pipe_s->cmd);
 	if (pipe_s->child_pid == -1)
 		exit(janitor(NULL, data, errno));
@@ -79,17 +79,16 @@ void	b_pipe(char *input, t_data *data)
 	pipe_s.pipe_read = -1;
 	while (pipe_s.next_pipe)
 	{
-		pipe_s.cmd = ft_substr(input, i, pipe_s.cmd_len);
 		pipe_ret = pipe(fd);
 		if (pipe_ret == -1)
-		{
-			free(pipe_s.cmd);
 			exit(janitor(NULL, data, errno));
-		}
-		pipe_cmd(&pipe_s, fd[1], data);
+		pipe_s.cmd = ft_substr(input, i, pipe_s.cmd_len);
+		pipe_s.pipe_write = fd[1];
+		pipe_cmd(&pipe_s, data);
 		i += b_pipe_next(&pipe_s, fd, input, i);
 	}
 	pipe_s.cmd = ft_substr(input, i, pipe_s.cmd_len);
-	pipe_cmd(&pipe_s, -1, data);
+	pipe_s.pipe_write = -1;
+	pipe_cmd(&pipe_s, data);
 	parent_waits(pipe_s.child_pid, data);
 }

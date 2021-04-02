@@ -64,6 +64,7 @@ static char	**exec_get_paths(char *path_env, char *cmd)
 static char	*exec_no_slash(char *path_env, char **argv, t_data *data)
 {
 	char		**paths;
+	char		*path;
 	struct stat	buff;
 	int			i;
 
@@ -78,8 +79,15 @@ static char	*exec_no_slash(char *path_env, char **argv, t_data *data)
 		i++;
 	}
 	if (!paths[i])
+	{
+		free_inputs(paths);
 		exit(janitor(argv, data, 127));
-	return (paths[i]);
+	}
+	path = ft_strdup(paths[i]);
+	free_inputs(paths);
+	if (!path)
+		exit(janitor(argv, data, errno + 128));
+	return (path);
 }
 
 int	exec_cmd(char **argv, t_data *data)

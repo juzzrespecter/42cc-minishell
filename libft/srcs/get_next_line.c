@@ -6,7 +6,7 @@
 /*   By: danrodri <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/25 18:14:54 by danrodri          #+#    #+#             */
-/*   Updated: 2021/03/31 20:02:07 by danrodri         ###   ########.fr       */
+/*   Updated: 2021/04/02 19:36:40 by danrodri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,11 @@ static int	free_and_exit(char *str)
 static int	get_out(int fd, char **line, char **backup, char *nl_pos)
 {
 	if (**line == 0)
+	{
+		if (backup[fd])
+			free(backup[fd]);
 		return (0);
+	}
 	if (nl_pos != NULL)
 	{
 		backup[fd] = ft_strdup(nl_pos + 1);

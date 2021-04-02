@@ -22,6 +22,7 @@ typedef struct s_pipe
 	char	*cmd;
 	int		cmd_len;
 	int		pipe_read;
+	int		pipe_write;
 	int		next_pipe;
 	pid_t	child_pid;
 }				t_pipe;

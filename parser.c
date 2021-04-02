@@ -43,45 +43,47 @@ void	input_copy(char *dst, char *src)
 	*dst = '\0';
 }
 
-static int	input_len(char *str)
+static int	input_len(char *str, int *len, int quote)
 {
-	int		i;
-	char	quote;
-
-	i = 0;
 	while (*str)
 	{
 		if (*str == ' ' && (*(str + 1) == ' ' || *(str + 1) == '\0'))
 			str++;
 		else if (*str == '\t' && (*(str + 1) == '\t' || *(str + 1) == '\0'))
 			str++;
-		else if (*str == '\\' && (str += 2)) // !!
-			i += 4;
+		else if (*str == '\\' && (str + 2))
+		{
+			*len += 4;
+			str += 2;
+		}
 		else if (*str == '"' || *str == '\'')
 		{
 			quote = *(str++);
-			quote_len(&str, &i, quote);
+			quote_len(&str, len, quote);
 			if (!*str)
 				return (-1);
 			str++;
-			i = i + 2;
+			*len += 2;
 		}
 		else if (str++)
-			i++;
+			*len = *len + 1;
 	}
-	return (i);
+	return (*len);
 }
 
 char	*input_cleaner(char *str)
 {
 	int		len;
+	char	quote;
 	char	*clean_input;
 	char	*str_start;
 
+	quote = 0;
 	str_start = str;
 	while (*str == ' ' && *str)
 		str++;
-	len = input_len(str);
+	len = 0;
+	len = input_len(str, &len, quote);
 	if (len == -1)
 		return (0);
 	clean_input = (char *)malloc((len + 1) * sizeof(char));
