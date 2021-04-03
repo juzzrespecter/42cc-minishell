@@ -15,8 +15,8 @@ static int	export_print(t_data *data)
 			j++;
 		write(1, "declare -x ", 11);
 		write(1, value, j);
-		write(1, "\"", 1);
-		write(1, value + j, ft_strlen(value + j));
+		write(1, "=\"", 2);
+		write(1, value + j + 1, ft_strlen(value + j + 1));
 		write(1, "\"\n", 2);
 		i++;
 	}
@@ -29,12 +29,12 @@ int	b_export(char **argv, t_data *data)
 	int		err;
 
 	err = 0;
-	i = 0;
+	i = 1;
 	if (argv[1] == NULL)
 		return (export_print(data));
 	while (argv[i] != NULL)
 	{
-		if (env_parse_id(argv[i]) == 0)
+		if (check_var(argv[i], 1) != 0)
 		{
 			if (env_add_id(argv[i], data) == -1)
 				return (errno + 128);

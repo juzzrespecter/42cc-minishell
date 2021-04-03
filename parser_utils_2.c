@@ -14,6 +14,8 @@ int	is_var(char *input)
 	int	i;
 
 	i = 0;
+	if (!ft_isalpha(input[i]) && input[i] != '_')
+		return (i);
 	while ((ft_isalnum(input[i]) || input[i] == '_') && input[i])
 		i++;
 	return (i);

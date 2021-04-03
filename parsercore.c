@@ -75,16 +75,17 @@ int	parsercore(char *clean_input, t_data *data, int piped)
 
 	oldfd[0] = dup(1);
 	oldfd[1] = dup(0);
-	clean_input = input_cleaner(clean_input); // fix leak
+	clean_input = input_cleaner(clean_input);
 	parser_redir(&clean_input, data);
 	clean_input = expand_variables(clean_input, data);
 	clean_input = input_cleaner(clean_input);
-	if (*clean_input == 0)  // fix
-		return (0);
-	inputs = input_split(clean_input);
-	free(clean_input);
-	select_cmd(inputs, data);
-	free_inputs(inputs);
+	if (*clean_input != 0)
+	{
+		inputs = input_split(clean_input);
+		free(clean_input);
+		select_cmd(inputs, data);
+		free_inputs(inputs);
+	}
 	dup2(oldfd[0], 1);
 	dup2(oldfd[1], 0);
 	close_fds(data);

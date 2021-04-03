@@ -56,15 +56,15 @@ int	b_unset(char **argv, t_data *data)
 	int		err;
 	char	**new_env;
 
-	i = 0;
+	i = 1;
 	err = 0;
-	while (argv[i + 1])
+	while (argv[i])
 	{
-		if (env_parse_id(argv[i + 1]) == 0)
+		if (check_var(argv[i], 0) != 0)
 		{
-			if (b_unset_id_in_env(argv[i + 1], data->env) == 0)
+			if (b_unset_id_in_env(argv[i], data->env) == 0)
 			{
-				new_env = b_unset_rm_id(argv[i + 1], data->env);
+				new_env = b_unset_rm_id(argv[i], data->env);
 				if (new_env == NULL)
 					return (print_error(NULL, NULL, \
 								strerror(errno), errno + 128));

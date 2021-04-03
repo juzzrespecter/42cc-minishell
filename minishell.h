@@ -106,5 +106,6 @@ char	*copy_literal(char *str, int quote);
 char	*copy_word(char *src);
 int		cmd_len(char *input);
 int		parser_err_msg(char *token);
+int		check_var(char *var, int export_true);
 
 #endif

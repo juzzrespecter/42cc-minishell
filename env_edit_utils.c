@@ -54,22 +54,6 @@ int	env_add_id(char *id, t_data *data)
 	return (0);
 }
 
-int	env_parse_id(char *id)
-{
-	int	i;
-
-	i = 0;
-	while (id[i] != '=' && id[i] != 0)
-	{
-		if (!(id[i] == '_' || ft_isalnum(id[i])))
-			return (1);
-		i++;
-	}
-	if (!i)
-		return (1);
-	return (0);
-}
-
 char	*search_env(char **env, char *name)
 {
 	int	name_len;
@@ -84,4 +68,16 @@ char	*search_env(char **env, char *name)
 		i++;
 	}
 	return (NULL);
+}
+
+int	check_var(char *var, int export_true)
+{
+	int	len;
+
+	len = is_var(var);
+	if (len == 0)
+		return (0);
+	if (var[len] == 0 || (var[len] == '=' && export_true == 1))
+		return (1);
+	return (0);
 }
