@@ -46,7 +46,7 @@ static int	get_out(int fd, char **line, char **backup, char *nl_pos)
 	}
 	if (nl_pos != NULL)
 	{
-		backup[fd] = ft_strdup(nl_pos + 1);
+		backup[fd] = ft_strdup(nl_pos + 1); // fix leak
 		if (!backup[fd])
 			return (free_and_exit(*line));
 		ft_bzero(nl_pos, ft_strlen(nl_pos));

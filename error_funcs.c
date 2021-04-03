@@ -68,6 +68,7 @@ int	parser_err_msg(char *token)
 		return (print_error(NULL, NULL, strerror(errno), errno + 128));
 	aux_str = err_msg;
 	err_msg = ft_strjoin(err_msg, "\'");
+	free(aux_str);
 	if (err_msg == NULL)
 		return (print_error(NULL, NULL, strerror(errno), errno + 128));
 	print_error(NULL, NULL, err_msg, 258);
