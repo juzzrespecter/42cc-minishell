@@ -61,8 +61,9 @@ static int	parser_err_exit(t_token *token)
 	ret_value = 0;
 	if (token->info != SEMICOLON && token->info != WORD && token->info != 0)
 		ret_value = parser_err_msg(token->str);
-	if (token->str != NULL)
-		free(token->str);
+	else
+		if (token->str != NULL)
+			free(token->str);
 	return (ret_value);
 }
 
