@@ -47,8 +47,8 @@ int	parser_semicolon(char *input, int semicolon_pos, t_data *data)
 	if (input[semicolon_pos - 1] == ' ')
 		space = 1;
 	input[semicolon_pos - space] = '\0';
-	parsercore(input, data, 0);
 	new_input = ft_strdup(&input[semicolon_pos + 1]);
+	parsercore(input, data, 0);
 	if (g_status != 130)
 		return (parser_start(new_input, data));
 	else

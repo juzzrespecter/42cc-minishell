@@ -27,23 +27,24 @@ char	*expand_and_control(char *str, t_data *data)
 	int		count;
 	char	*token;
 	char	*var_check;
-	char	*str_expanded;
 	char	*filename;
 
 	var_check = ft_strchr(str, '$');
-	if (var_check == NULL)
-		return (str);
-	token = ft_strdup(str);
-	str_expanded = expand_variables(str, data);
-	count = count_words(str_expanded);
-	if (count > 1)
+	if (var_check != NULL)
 	{
-		data->redir = 0;
-		g_status = print_error(NULL, token, "ambiguous redirect", 1);
+		token = ft_strdup(str);
+		str = expand_variables(str, data);
+		count = count_words(str);
+		if (count > 1)
+		{
+			data->redir = 0;
+			g_status = print_error(NULL, token, "ambiguous redirect", 1);
+			free(token);
+			return (NULL);
+		}
 		free(token);
-		return (NULL);
 	}
-	free(token);
-	filename = copy_word(str_expanded);
+	filename = copy_word(str);
+	free(str);
 	return (filename);
 }
