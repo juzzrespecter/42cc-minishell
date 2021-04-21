@@ -7,6 +7,8 @@ SRCS	+= pwd.c env.c pipe.c signal.c exit.c
 
 SRCS	+= parser_utils_2.c b_echo.c b_export.c b_unset.c b_cd.c env_edit_utils.c exec_cmd.c parser_variable.c parser_error.c error_funcs.c parser_utils_3.c expand_and_control.c
 
+SRCS	+= history.c line_edit.c history_mode.c
+
 LIBFT	= libft/libft.a
 
 OBJS	= $(SRCS:.c=.o)
@@ -17,9 +19,9 @@ LIBFT	= libft/libft.a
 
 CLANG	= clang
 
-FLAGS	= -Wall -Wextra -Werror
+FLAGS	= -Wall -Wextra -Werror 
 
-INCLUDE	= -L libft -lft
+INCLUDE	= -L libft -lft -ltermcap
 
 
 

@@ -10,6 +10,12 @@
 # include <dirent.h>
 # include "libft.h"
 # include <fcntl.h>
+# include <termios.h>
+# include <term.h>
+# include <curses.h>
+
+# define HIST_FILE		"./.minishell_history"
+# define HIST_SIZE		20
 
 typedef struct s_token
 {
@@ -34,6 +40,25 @@ typedef struct s_index
 	int	quote;
 }				t_index;
 
+typedef struct z_list
+{
+	void			*content;
+	struct z_list	*next;
+	struct z_list	*previous;
+}				h_list;
+
+typedef	struct		s_termc
+{
+	char			*up_key;
+	char			*down_key;
+	char			*cariage_return;
+	char			*clear_line;
+	char			*keyend;
+	char			*keystart;
+}					t_termc;
+
+typedef struct termios t_termios;
+
 typedef struct s_data
 {
 	char	**env;
@@ -41,6 +66,12 @@ typedef struct s_data
 	int		fd_in;
 	int		fd_out;
 	int		redir;
+	int		in_terminal;
+	t_termios		origin;
+	t_termios		modified;
+	h_list			*history_head;
+	h_list			*history_index;
+	t_termc			*termc;
 }		t_data;
 
 int		g_status;
@@ -107,5 +138,27 @@ char	*copy_word(char *src);
 int		cmd_len(char *input);
 int		parser_err_msg(char *token);
 int		check_var(char *var, int export_true);
+
+int		is_print(char c);
+int		putchar_2(int c);
+h_list	*ft_lstnew_2(void *content);
+void	add_history(h_list **hist_head, h_list **hist_index, char *command);
+char	*browse_history_up(h_list **history_index);
+char	*browse_history_down(h_list **history_index);
+int		clear_line (t_data *data);
+int		set_sig(char **holder);
+void	history_up(char **holder, t_data *data);
+void	history_down(char **holder, t_data *data);
+void	delete_char(char **holder, t_data *data);
+void	end_of_file(t_data *data, char *holder);
+void	append_to_holder(char *buffer, char **holder, t_data *data);
+void	return_input(t_data *data, char *holder);
+char	*path_to_hist(void);
+void	get_history_from_file(int fd, t_data *data);
+void	build_history(t_data *data);
+void	save_history(t_data *data);
+void	history_mode(t_data *data, char **holder);
+int		set_history_mode(t_data *data);
+
 
 #endif
