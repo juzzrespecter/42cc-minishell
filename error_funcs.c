@@ -38,7 +38,7 @@ void	free_inputs(char **inputs)
 
 int	print_error(char *cmd, char *arg, char *err_msg, int exit_code)
 {
-	write(2, "bash: ", 6);
+	write(2, "minishell: ", 11);
 	if (cmd != NULL)
 	{
 		write(2, cmd, ft_strlen(cmd));

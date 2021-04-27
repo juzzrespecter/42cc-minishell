@@ -1,62 +1,49 @@
 #include "minishell.h"
 
-void	free_data(t_data *data, char *user_input)
+void	free_data(t_data *data, int exit_code)
 {
 	free_env(data->env);
-	free(user_input);
 	free(data->pwd);
 	ft_putstr_fd("exit\n", 2);
-	exit(EXIT_SUCCESS);
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &data->origin);
+	exit(exit_code);
 }
 
 void	data_init(t_data *data, char **env)
 {
 	data->env = copy_env(env);
+	if (!data->env)
+		exit(EXIT_FAILURE);
 	data->pwd = getcwd(NULL, 0);
 	data->fd_in = 0;
 	data->fd_out = 1;
 	data->redir = 1;
+	data->input = NULL;
+	data->history_head = NULL;
+	data->history_index = NULL;
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_data	data;
-	int		ret;
-	char		*holder;
 
-	argc = 0;
-	argv = NULL;
-	data_init(&data, envp);
+	(void)argc;
+	(void)argv;
 	g_status = 0;
 	g_input = NULL;
-	if (!data.env)
-		exit(EXIT_FAILURE);
-	if (data.in_terminal)
-		build_history(&data);
-	if (!(set_history_mode(&data)))
-	{
-		free_data(&data, g_input);
-		exit(1);
-	}
+	data_init(&data, envp);
+	build_history(&data);
+	set_history_mode(&data);
 	while (1)
 	{
-		free(g_input);
+		//free(g_input);
+		data.input = ft_strdup("");
 		sig_init();
 		ft_putstr_fd("DANFERminishell> ", 2);
-		if (data.in_terminal)
-		{
-			history_mode(&data, &holder);
-			tcsetattr(0, TCSANOW, &data.origin);
-			parser_start(holder, &data);
-		}
-		else
-		{
-			ret = get_next_line(0, &g_input);
-			if (!ret)
-			free_data(&data, g_input);
-			else
-			parser_start(g_input, &data);
-		}
+		history_mode(&data);
+		g_input = ft_strdup(data.input);
+		free(data.input);
+		parser_start(g_input, &data);
 	}
 	return (0);
 }

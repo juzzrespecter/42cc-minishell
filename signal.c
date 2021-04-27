@@ -12,7 +12,10 @@ void	handle_sig(int sig)
 		g_input = ft_strdup("\0");
 	}
 	else if (sig == SIGQUIT)
+	{
+		g_status = 131;
 		write(2, "\b\b  \b\b", 6);
+	}
 }
 
 void	sig_init(void)

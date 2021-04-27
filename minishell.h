@@ -61,6 +61,7 @@ typedef struct termios t_termios;
 
 typedef struct s_data
 {
+	char	*input;
 	char	**env;
 	char	*pwd;
 	int		fd_in;
@@ -146,19 +147,20 @@ void	add_history(h_list **hist_head, h_list **hist_index, char *command);
 char	*browse_history_up(h_list **history_index);
 char	*browse_history_down(h_list **history_index);
 int		clear_line (t_data *data);
-int		set_sig(char **holder);
-void	history_up(char **holder, t_data *data);
-void	history_down(char **holder, t_data *data);
-void	delete_char(char **holder, t_data *data);
-void	end_of_file(t_data *data, char *holder);
-void	append_to_holder(char *buffer, char **holder, t_data *data);
-void	return_input(t_data *data, char *holder);
+int		set_sig(t_data *data);
+void	history_up(t_data *data);
+void	history_down(t_data *data);
+void	delete_char(t_data *data);
+void	end_of_file(t_data *data);
+void	append_to_holder(char *buffer, t_data *data);
+void	return_input(t_data *data);
 char	*path_to_hist(void);
 void	get_history_from_file(int fd, t_data *data);
 void	build_history(t_data *data);
 void	save_history(t_data *data);
-void	history_mode(t_data *data, char **holder);
+void	history_mode(t_data *data);
 int		set_history_mode(t_data *data);
+void	free_data(t_data *data, int exit_code);
 
 
 #endif

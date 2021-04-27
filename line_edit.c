@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int		set_sig(char **holder)
+int		set_sig(t_data *data)
 {
 	int		brk;
 
@@ -10,14 +10,14 @@ int		set_sig(char **holder)
 	if (g_status == -1) 
 	{
 		g_status = 0;
-		free(*holder);
-		*holder = ft_strdup("");
+		free(data->input);
+		data->input = ft_strdup("");
 		brk = 1;
 	}
 	return (brk);
 }
 
-void	history_up(char **holder, t_data *data)
+void	history_up(t_data *data)
 {
 	char *tmp;
 
@@ -25,64 +25,65 @@ void	history_up(char **holder, t_data *data)
 		data->history_index =  data->history_head;
 	if (data->history_head && data->history_head->next == NULL)
 	{
-		free(*holder);
-		*holder = ft_strdup(data->history_head->content);
+		free(data->input);
+		data->input = ft_strdup(data->history_head->content);
 		clear_line(data);
-		ft_putstr_fd(*holder, 2);
+		ft_putstr_fd(data->input, 2);
 	}
 	else if ((tmp = browse_history_up(&(data->history_index))))
 	{
-		free(*holder);
-		*holder = ft_strdup(tmp);
+		free(data->input);
+		data->input = ft_strdup(tmp);
 		clear_line(data);
-		ft_putstr_fd(*holder, 2);
+		ft_putstr_fd(data->input, 2);
 	}
 }
 
-void	history_down(char **holder, t_data *data)
+void	history_down(t_data *data)
 {
 	char	*tmp;
 
 	tmp = browse_history_down(&(data->history_index));
-	free(*holder);
-	*holder = (tmp)? ft_strdup(tmp): ft_strdup("");
+	free(data->input);
+	data->input = (tmp)? ft_strdup(tmp): ft_strdup("");
 	clear_line(data);
 	if (tmp)
-		ft_putstr_fd(*holder, 2);
+		ft_putstr_fd(data->input, 2);
 }
 
-void	delete_char(char **holder, t_data *data)
+void	delete_char(t_data *data)
 {
-	if (*holder[0] != '\0')
-		(*holder)[ft_strlen(*holder) - 1] = '\0';
+	if (data->input[0] != '\0')
+		data->input[ft_strlen(data->input) - 1] = '\0';
 	clear_line(data);
-	ft_putstr_fd(*holder, 2);
+	ft_putstr_fd(data->input, STDOUT_FILENO);
 }
 
-void	end_of_file(t_data *data, char *holder)
+void	end_of_file(t_data *data)
 {
-	if (*holder == '\0')
+
+	if (data->input[0] == '\0')
 	{
-		ft_putstr_fd("\nexit\n", 2);
+		ft_putstr_fd("exit\n", STDOUT_FILENO);
 		tcsetattr(0, TCSANOW, &data->origin);
 		save_history(data);
 		exit(0);
 	}
 }
 
-void	append_to_holder(char *buffer, char **holder, t_data *data)
+void	append_to_holder(char *buffer, t_data *data)
 {
 	char *tmp;
 
-	tmp = *holder;
-	*holder = ft_strjoin(*holder, buffer);
+	tmp = data->input;
+	data->input = ft_strjoin(data->input, buffer);
 	free(tmp);
-	clear_line(data);
-	ft_putstr_fd(*holder, 2);
+	//clear_line(data);
+	ft_putchar_fd(data->input[ft_strlen(data->input) - 1], STDOUT_FILENO);
 }
 
-void	return_input(t_data *data, char *holder)
+void	return_input(t_data *data)
 {
-	write(2, &"\n", 1);
-	add_history(&(data->history_head), &(data->history_index), holder);
+	write(2, "\n", 1);
+	add_history(&(data->history_head), &(data->history_index), data->input);
 }

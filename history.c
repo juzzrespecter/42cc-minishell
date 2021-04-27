@@ -71,7 +71,7 @@ int		clear_line(t_data *data)
 {
 	tputs(data->termc->clear_line, 1, putchar_2);
 	tputs(data->termc->cariage_return, 1, putchar_2);
-	ft_putstr_fd("DANFERminishell", 2);
+	ft_putstr_fd("DANFERminishell> ", STDOUT_FILENO);
 	return (1);
 }
 
@@ -87,6 +87,7 @@ void	get_history_from_file(int fd, t_data *data)
 	hist_tail = NULL;
 	while ((ret = get_next_line(fd, &line)) >= 0)
 	{
+//		data->history_head = NULL;
 		if (*line != '\0')
 		{
 			hist_count++;
@@ -142,10 +143,9 @@ void	save_history(t_data *data)
 	int		fd;
 	char	*tmp;
 
-	fd = open(HIST_FILE, O_CREAT | O_TRUNC, 0666);
-	close(fd);
+	//fd = open(HIST_FILE, O_CREAT | O_TRUNC, 0666);
+	//close(fd);
 	fd = open(HIST_FILE, O_APPEND | O_CREAT | O_RDWR, 0666);
-	printf("%d\n", fd);
 	if (fd >= 0)
 	{
 		history_tail(data);
