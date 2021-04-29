@@ -2,19 +2,19 @@
 
 static int	select_from_builtins(char **inputs, t_data *data)
 {
-	if (!ft_strncmp(inputs[0], "echo", ft_strlen(inputs[0])))
+	if (!ft_strncmp(inputs[0], "echo", ft_strlen("echo") + 1))
 		b_echo(inputs);
-	else if (!ft_strncmp(inputs[0], "pwd", ft_strlen(inputs[0])))
+	else if (!ft_strncmp(inputs[0], "pwd", ft_strlen("pwd") + 1))
 		b_pwd(data);
-	else if (!ft_strncmp(inputs[0], "cd", ft_strlen(inputs[0])))
+	else if (!ft_strncmp(inputs[0], "cd", ft_strlen("cd") + 1))
 		b_cd(inputs, data);
-	else if (!ft_strncmp(inputs[0], "env", ft_strlen(inputs[0])))
+	else if (!ft_strncmp(inputs[0], "env", ft_strlen("env") + 1))
 		b_env(data->env);
-	else if (!ft_strncmp(inputs[0], "exit", ft_strlen(inputs[0])))
+	else if (!ft_strncmp(inputs[0], "exit", ft_strlen("exit") + 1))
 		b_exit(inputs, data);
-	else if (!ft_strncmp(inputs[0], "export", ft_strlen(inputs[0])))
+	else if (!ft_strncmp(inputs[0], "export", ft_strlen("export") + 1))
 		b_export(inputs, data);
-	else if (!ft_strncmp(inputs[0], "unset", ft_strlen(inputs[0])))
+	else if (!ft_strncmp(inputs[0], "unset", ft_strlen("unset") + 1))
 		b_unset(inputs, data);
 	else
 		return (0);
@@ -62,8 +62,6 @@ void	close_fds(t_data *data)
 void	exit_pipe(t_data *data)
 {
 	free_inputs(data->env);
-	if (g_input)
-		free(g_input);
 	free(data->pwd);
 	exit(g_status);
 }

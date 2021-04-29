@@ -40,14 +40,14 @@ typedef struct s_index
 	int	quote;
 }				t_index;
 
-typedef struct z_list
+typedef struct s_hlist
 {
 	void			*content;
-	struct z_list	*next;
-	struct z_list	*previous;
-}				h_list;
+	struct s_hlist	*next;
+	struct s_hlist	*previous;
+}				t_hlist;
 
-typedef	struct		s_termc
+typedef struct s_termc
 {
 	char			*up_key;
 	char			*down_key;
@@ -57,26 +57,24 @@ typedef	struct		s_termc
 	char			*keystart;
 }					t_termc;
 
-typedef struct termios t_termios;
-
 typedef struct s_data
 {
-	char	*input;
-	char	**env;
-	char	*pwd;
-	int		fd_in;
-	int		fd_out;
-	int		redir;
-	int		in_terminal;
-	t_termios		origin;
-	t_termios		modified;
-	h_list			*history_head;
-	h_list			*history_index;
+	char			*input;
+	char			**env;
+	char			*pwd;
+	int			fd_in;
+	int			fd_out;
+	int			redir;
+	int			in_terminal;
+	struct termios		origin;
+	struct termios		modified;
+	t_hlist			*history_head;
+	t_hlist			*history_index;
 	t_termc			*termc;
-}		t_data;
+}	t_data;
 
-int		g_status;
-char	*g_input;
+int				g_status;
+char				*g_input;
 int		envlen(char **env);
 void	free_env(char **env);
 char	**copy_env(char **env);
@@ -142,10 +140,10 @@ int		check_var(char *var, int export_true);
 
 int		is_print(char c);
 int		putchar_2(int c);
-h_list	*ft_lstnew_2(void *content);
-void	add_history(h_list **hist_head, h_list **hist_index, char *command);
-char	*browse_history_up(h_list **history_index);
-char	*browse_history_down(h_list **history_index);
+t_hlist	*ft_lstnew_2(void *content);
+void	add_history(t_hlist **hist_head, t_hlist **hist_index, char *command);
+char	*browse_history_up(t_hlist **history_index);
+char	*browse_history_down(t_hlist **history_index);
 int		clear_line (t_data *data);
 int		set_sig(t_data *data);
 void	history_up(t_data *data);
@@ -161,6 +159,5 @@ void	save_history(t_data *data);
 void	history_mode(t_data *data);
 int		set_history_mode(t_data *data);
 void	free_data(t_data *data, int exit_code);
-
 
 #endif

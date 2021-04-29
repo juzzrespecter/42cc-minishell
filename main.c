@@ -36,7 +36,6 @@ int	main(int argc, char **argv, char **envp)
 	set_history_mode(&data);
 	while (1)
 	{
-		//free(g_input);
 		data.input = ft_strdup("");
 		sig_init();
 		ft_putstr_fd("DANFERminishell> ", 2);

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int		is_print(char c)
+int	is_print(char c)
 {
 	if ((c >= 32 && c <= 126) || c == 9)
 		return (1);
@@ -10,13 +10,12 @@ int		is_print(char c)
 void	history_mode(t_data *data)
 {
 	char	buffer[4];
-	int		i;
 
 	while (1)
 	{
 		tputs(data->termc->keystart, 1, putchar_2);
 		ft_memset(buffer, 0, 4);
-		i = read(0, buffer, 3);
+		read(0, buffer, 3);
 		if (set_sig(data))
 			return ;
 		if (!ft_strcmp(buffer, data->termc->up_key))
@@ -37,10 +36,27 @@ void	history_mode(t_data *data)
 	}
 }
 
-int		set_history_mode(t_data *data)
+void	set_termcaps(t_data *data)
+{
+	data->termc->keystart = tgetstr("ks", 0);
+	data->termc->clear_line = tgetstr("dl", 0);
+	data->termc->up_key = tgetstr("ku", 0);
+	data->termc->down_key = tgetstr("kd", 0);
+	data->termc->cariage_return = tgetstr("cr", 0);
+	data->termc->keyend = tgetstr("ke", 0);
+	if (!data->termc->keystart
+		|| !data->termc->clear_line
+		|| !data->termc->up_key
+		|| !data->termc->down_key
+		|| !data->termc->cariage_return
+		|| !data->termc->keyend)
+		free_data(data, EXIT_FAILURE);
+}
+
+int	set_history_mode(t_data *data)
 {
 	char	*termtype;
-	int i;
+	int		i;
 
 	if (isatty(STDIN_FILENO))
 	{
@@ -51,27 +67,16 @@ int		set_history_mode(t_data *data)
 			free_data(data, EXIT_FAILURE);
 		}
 		i = tgetent(0, termtype);
-		if (i != 1)
+		data->termc = ft_calloc(1, sizeof(t_termc));
+		if (i != 1 || !data->termc)
 			free_data(data, EXIT_FAILURE);
-		if (!(data->termc = malloc(sizeof(t_termc))))
-			free_data(data, EXIT_FAILURE);
-		ft_memset((data->termc), 0, sizeof(t_termc));
-		//data->in_terminal = 1;
-		bzero(&data->modified, sizeof(t_termios));
+		bzero(&data->modified, sizeof(struct termios));
 		tcgetattr(0, &data->origin);
 		tcgetattr(0, &data->modified);
-		data->modified.c_iflag &= ~(IGNBRK | BRKINT | ICRNL | INLCR | PARMRK | INPCK | ISTRIP | IXON);
+		data->modified.c_iflag &= ~(IGNBRK | BRKINT | ICRNL
+				| INLCR | PARMRK | INPCK | ISTRIP | IXON);
 		data->modified.c_lflag &= ~(ICANON | ECHO);
-		//data->modified.c_cc[VMIN] = 1;
-		//data->modified.c_cc[VTIME] = 0;
-		if (!(data->termc->keystart = tgetstr("ks", 0))
-				|| !(data->termc->clear_line = tgetstr("dl", 0))
-				|| !(data->termc->up_key = tgetstr("ku", 0))
-				|| !(data->termc->down_key = tgetstr("kd", 0))
-				|| !(data->termc->cariage_return = tgetstr("cr", 0))
-				|| !(data->termc->keyend = tgetstr("ke", 0)))
-			free_data(data, EXIT_FAILURE);
-		//data->in_terminal = 1;
+		set_termcaps(data);
 	}
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &data->modified);
 	return (1);
