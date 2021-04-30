@@ -43,27 +43,27 @@ char	**copy_env(char **env)
 	return (data_env);
 }
 
-void	b_env(char **env)
+void	b_env(t_data *data)
 {
 	int		i;
 	int		j;
 	char	*str;
 
 	i = 0;
-	while (env[i])
+	while (data->env[i])
 	{
-		str = ft_strnstr(env[i], "=", ft_strlen(env[i]));
+		str = ft_strnstr(data->env[i], "=", ft_strlen(data->env[i]));
 		if (str)
 		{
 			j = 0;
-			while (env[i][j])
+			while (data->env[i][j])
 			{
-				write(1, &env[i][j], 1);
+				write(1, &data->env[i][j], 1);
 				j++;
 			}
 			ft_putchar('\n');
 		}
 		i++;
 	}
-	g_status = 0;
+	data->status = 0;
 }

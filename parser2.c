@@ -29,7 +29,7 @@ int	parser_pipe(char *input, t_data *data)
 	if (pipe_pid == 0)
 		b_pipe(input, data);
 	waitpid(pipe_pid, &pipe_status, 0);
-	g_status = WEXITSTATUS(pipe_status);
+	data->status = WEXITSTATUS(pipe_status);
 	pipe_end = move_pipe_end(input);
 	if (input[pipe_end])
 		pipe_end++;
@@ -49,7 +49,7 @@ int	parser_semicolon(char *input, int semicolon_pos, t_data *data)
 	input[semicolon_pos - space] = '\0';
 	new_input = ft_strdup(&input[semicolon_pos + 1]);
 	parsercore(input, data, 0);
-	if (g_status != 130)
+	if (data->status != 130)
 		return (parser_start(new_input, data));
 	else
 		free(new_input);

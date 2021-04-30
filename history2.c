@@ -24,6 +24,7 @@ void	get_history_from_file(int fd, t_data *data)
 			break ;
 		ret = get_next_line(fd, &line);
 	}
+	//add_history(&data->history_head, &data->history_index, ft_strdup("");
 }
 
 void	build_history(t_data *data)

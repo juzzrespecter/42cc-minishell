@@ -3,13 +3,13 @@
 static int	select_from_builtins(char **inputs, t_data *data)
 {
 	if (!ft_strncmp(inputs[0], "echo", ft_strlen("echo") + 1))
-		b_echo(inputs);
+		b_echo(data, inputs);
 	else if (!ft_strncmp(inputs[0], "pwd", ft_strlen("pwd") + 1))
 		b_pwd(data);
 	else if (!ft_strncmp(inputs[0], "cd", ft_strlen("cd") + 1))
 		b_cd(inputs, data);
 	else if (!ft_strncmp(inputs[0], "env", ft_strlen("env") + 1))
-		b_env(data->env);
+		b_env(data);
 	else if (!ft_strncmp(inputs[0], "exit", ft_strlen("exit") + 1))
 		b_exit(inputs, data);
 	else if (!ft_strncmp(inputs[0], "export", ft_strlen("export") + 1))
@@ -41,7 +41,7 @@ void	select_cmd(char **inputs, t_data *data)
 		if (process_pid == 0)
 			exec_cmd(inputs, data);
 		wait(&wait_status);
-		g_status = WEXITSTATUS(wait_status);
+		data->status = WEXITSTATUS(wait_status);
 	}
 }
 
@@ -63,7 +63,7 @@ void	exit_pipe(t_data *data)
 {
 	free_inputs(data->env);
 	free(data->pwd);
-	exit(g_status);
+	exit(data->status);
 }
 
 int	parsercore(char *clean_input, t_data *data, int piped)

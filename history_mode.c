@@ -11,6 +11,7 @@ void	history_mode(t_data *data)
 {
 	char	buffer[4];
 
+	data->input = ft_strdup("");
 	while (1)
 	{
 		tputs(data->termc->keystart, 1, putchar_2);

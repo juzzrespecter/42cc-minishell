@@ -4,5 +4,5 @@ void	b_pwd(t_data *data)
 {
 	ft_putstr(data->pwd);
 	ft_putstr("\n");
-	g_status = 0;
+	data->status = 0;
 }

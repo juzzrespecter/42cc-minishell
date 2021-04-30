@@ -5,11 +5,11 @@ int	set_sig(t_data *data)
 	int	brk;
 
 	brk = 0;
-	if (g_status == -2)
-		g_status = 0;
-	if (g_status == -1)
+	if (data->status == -2)
+		data->status = 0;
+	if (data->status == -1)
 	{
-		g_status = 0;
+		data->status = 0;
 		free(data->input);
 		data->input = ft_strdup("");
 		brk = 1;

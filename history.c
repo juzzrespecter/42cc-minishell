@@ -63,20 +63,6 @@ char	*browse_history_down(t_hlist **history_index)
 	return (NULL);
 }
 
-/*char	*browse_history_down(t_hlist **history_index)
-{
-	char	*tmp;
-
-	if (*history_index)
-	{
-		tmp = (*history_index)->content;
-		if ((*history_index)->previous != NULL)
-		{
-			(*history_index) = (*history_index)->previous;
-		}
-	}
-}*/
-
 int	putchar_2(int c)
 {
 	return (write(2, &c, 1));

@@ -1,13 +1,13 @@
 #include "minishell.h"
 
-void	b_echo(char **argv)
+void	b_echo(t_data *data, char **argv)
 {
 	int	i;
 	int	n_flag;
 
 	i = 1;
 	n_flag = 0;
-	g_status = 0;
+	data->status = 0;
 	while (argv[i] && !ft_strcmp(argv[i], "-n") && i++)
 		n_flag = 1;
 	while (argv[i])

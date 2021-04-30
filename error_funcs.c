@@ -17,6 +17,7 @@ int	janitor(char **argv, t_data *data, int err_code)
 			stat = print_error(argv[0], NULL, strerror(errno), 126);
 		if (err_code != 0 && err_code != 2 && err_code != 13 && err_code != 127)
 			stat = print_error(argv[0], NULL, strerror(errno), errno + 128);
+		data->status = stat;
 		free_inputs(argv);
 	}
 	free_env(data->env);
@@ -51,7 +52,6 @@ int	print_error(char *cmd, char *arg, char *err_msg, int exit_code)
 	}
 	write(2, err_msg, ft_strlen((err_msg)));
 	write(2, "\n", 1);
-	g_status = exit_code;
 	return (exit_code);
 }
 

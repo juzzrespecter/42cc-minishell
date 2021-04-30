@@ -4,16 +4,16 @@ void	handle_sig(int sig)
 {
 	if (sig == SIGINT)
 	{
-		g_status = 130;
-		if (g_input)
+		g_data.status = 130;
+		if (g_data.input)
 			ft_putstr_fd("\nDANFERminishell> ", 2);
-		if (g_input)
-			free(g_input);
-		g_input = ft_strdup("\0");
+		if (g_data.input)
+			free(g_data.input);
+		g_data.input = ft_strdup("\0");
 	}
 	else if (sig == SIGQUIT)
 	{
-		g_status = 131;
+		g_data.status = 131;
 		write(2, "\b\b  \b\b", 6);
 	}
 }
@@ -30,14 +30,14 @@ void	handle_exec_sig(int sig)
 {
 	if (sig == SIGINT)
 	{
-		if (g_input)
-			free(g_input);
-		g_status = 130;
+		if (g_data.input)
+			free(g_data.input);
+		g_data.status = 130;
 		write(2, "\n", 1);
 	}
 	else if (sig == SIGQUIT)
 	{
-		g_status = 131;
+		g_data.status = 131;
 		ft_putstr_fd("Exit (core dumped)\n", 2);
 	}
 }

@@ -38,7 +38,7 @@ char	*expand_and_control(char *str, t_data *data)
 		if (count > 1)
 		{
 			data->redir = 0;
-			g_status = print_error(NULL, token, "ambiguous redirect", 1);
+			data->status = print_error(NULL, token, "ambiguous redirect", 1);
 			free(token);
 			return (NULL);
 		}
