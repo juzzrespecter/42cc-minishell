@@ -4,8 +4,6 @@ void	history_up(t_data *data)
 {
 	char	*tmp;
 
-	if (data->history_index == NULL)
-		data->history_index = data->history_head;
 	if (data->history_head && data->history_head->next == NULL)
 	{
 		free(data->input);
@@ -15,7 +13,7 @@ void	history_up(t_data *data)
 	}
 	else
 	{
-		tmp = browse_history_up(&(data->history_index));
+		tmp = browse_history_up(&(data->history_index), &(data->history_head));
 		if (tmp)
 		{
 			free(data->input);

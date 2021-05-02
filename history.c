@@ -8,10 +8,11 @@ t_hlist	*ft_lstnew_2(void *content)
 	ft_memset(new, 0, sizeof(t_hlist));
 	if (new)
 		new->content = content;
+	new->previous = NULL;
 	return (new);
 }
 
-void	add_history(t_hlist **hist_head, t_hlist **hist_index, char *command)
+void	add_history(t_hlist **hist_head, char *command)
 {
 	t_hlist	*new;
 
@@ -31,36 +32,37 @@ void	add_history(t_hlist **hist_head, t_hlist **hist_index, char *command)
 				(*hist_head)->previous = new;
 				*hist_head = new;
 			}
-			*hist_index = *hist_head;
 		}
 	}
 }
 
-char	*browse_history_up(t_hlist **history_index)
+char	*browse_history_up(t_hlist **history_index, t_hlist **history_head)
 {
 	char	*tmp;
 
 	if (*history_index)
 	{
-		tmp = (*history_index)->content;
 		if ((*history_index)->next != NULL)
 			(*history_index) = (*history_index)->next;
+		tmp = (*history_index)->content;
 		return (tmp);
 	}
-	return (NULL);
+	*history_index = *history_head;
+	return ((*history_index)->content);
 }
 
 char	*browse_history_down(t_hlist **history_index)
 {
 	char	*tmp;
 
+	tmp = NULL;
 	if (*history_index)
 	{
-		tmp = (*history_index)->content;
 		(*history_index) = (*history_index)->previous;
-		return (tmp);
+		if (*history_index)
+			tmp = (*history_index)->content;
 	}
-	return (NULL);
+	return (tmp);
 }
 
 int	putchar_2(int c)

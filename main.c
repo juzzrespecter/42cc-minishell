@@ -31,10 +31,11 @@ int	main(int argc, char **argv, char **envp)
 	data_init(&g_data, envp);
 	build_history(&g_data);
 	set_history_mode(&g_data);
+	sig_init();
 	while (1)
 	{
-		sig_init();
 		ft_putstr_fd("DANFERminishell> ", 2);
+		g_data.input = ft_strdup("");
 		history_mode(&g_data);
 		parser_start(g_data.input, &g_data);
 	}

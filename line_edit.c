@@ -49,5 +49,6 @@ void	append_to_holder(char *buffer, t_data *data)
 void	return_input(t_data *data)
 {
 	write(2, "\n", 1);
-	add_history(&(data->history_head), &(data->history_index), data->input);
+	add_history(&(data->history_head), data->input);
+	data->history_index = NULL;
 }

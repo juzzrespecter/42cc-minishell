@@ -18,13 +18,12 @@ void	get_history_from_file(int fd, t_data *data)
 	while (ret >= 0)
 	{
 		if (*line != '\0')
-			add_history(&data->history_head, &data->history_index, line);
+			add_history(&data->history_head, line);
 		free(line);
 		if (ret == 0)
 			break ;
 		ret = get_next_line(fd, &line);
 	}
-	//add_history(&data->history_head, &data->history_index, ft_strdup("");
 }
 
 void	build_history(t_data *data)

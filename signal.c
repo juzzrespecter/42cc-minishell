@@ -10,6 +10,7 @@ void	handle_sig(int sig)
 		if (g_data.input)
 			free(g_data.input);
 		g_data.input = ft_strdup("\0");
+		g_data.history_index = NULL;
 	}
 	else if (sig == SIGQUIT)
 	{
