@@ -60,15 +60,15 @@ typedef struct s_termc
 typedef struct s_data
 {
 	char			*input;
-	int			status;
+	int				status;
 	char			**env;
 	char			*pwd;
-	int			fd_in;
-	int			fd_out;
-	int			redir;
-	int			in_terminal;
-	struct termios		origin;
-	struct termios		modified;
+	int				fd_in;
+	int				fd_out;
+	int				redir;
+	int				in_terminal;
+	struct termios	origin;
+	struct termios	modified;
 	t_hlist			*history_head;
 	t_hlist			*history_index;
 	t_termc			*termc;

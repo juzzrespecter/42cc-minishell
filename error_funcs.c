@@ -17,9 +17,9 @@ int	janitor(char **argv, t_data *data, int err_code)
 			stat = print_error(argv[0], NULL, strerror(errno), 126);
 		if (err_code != 0 && err_code != 2 && err_code != 13 && err_code != 127)
 			stat = print_error(argv[0], NULL, strerror(errno), errno + 128);
-		data->status = stat;
 		free_inputs(argv);
 	}
+	data->status = stat;
 	free_env(data->env);
 	return (stat);
 }
@@ -71,7 +71,7 @@ int	parser_err_msg(char *token)
 	free(aux_str);
 	if (err_msg == NULL)
 		return (print_error(NULL, NULL, strerror(errno), errno + 128));
-	print_error(NULL, NULL, err_msg, 258);
+	g_data.status = print_error(NULL, NULL, err_msg, 258);
 	free(err_msg);
 	return (258);
 }

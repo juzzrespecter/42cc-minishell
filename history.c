@@ -40,6 +40,7 @@ char	*browse_history_up(t_hlist **history_index, t_hlist **history_head)
 {
 	char	*tmp;
 
+	tmp = NULL;
 	if (*history_index)
 	{
 		if ((*history_index)->next != NULL)
@@ -47,8 +48,12 @@ char	*browse_history_up(t_hlist **history_index, t_hlist **history_head)
 		tmp = (*history_index)->content;
 		return (tmp);
 	}
-	*history_index = *history_head;
-	return ((*history_index)->content);
+	if (*history_head)
+	{
+		*history_index = *history_head;
+		tmp = (*history_index)->content;
+	}
+	return (tmp);
 }
 
 char	*browse_history_down(t_hlist **history_index)
