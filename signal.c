@@ -12,11 +12,6 @@ void	handle_sig(int sig)
 		g_data.input = ft_strdup("\0");
 		g_data.history_index = NULL;
 	}
-	else if (sig == SIGQUIT)
-	{
-		g_data.status = 131;
-		write(2, "\b\b  \b\b", 6);
-	}
 }
 
 void	sig_init(void)
@@ -33,12 +28,12 @@ void	handle_exec_sig(int sig)
 	{
 		if (g_data.input)
 			free(g_data.input);
-		g_data.status = 130;
+		g_data.status_signal = 130;
 		write(2, "\n", 1);
 	}
 	else if (sig == SIGQUIT)
 	{
-		g_data.status = 131;
+		g_data.status_signal = 131;
 		ft_putstr_fd("Exit (core dumped)\n", 2);
 	}
 }

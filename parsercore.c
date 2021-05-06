@@ -38,10 +38,17 @@ void	select_cmd(char **inputs, t_data *data)
 		process_pid = fork();
 		if (process_pid == -1)
 			exit(EXIT_FAILURE);
+		sig_exec_init();
 		if (process_pid == 0)
 			exec_cmd(inputs, data);
 		wait(&wait_status);
+		sig_init();
 		data->status = WEXITSTATUS(wait_status);
+		if (data->status_signal > 0)
+		{
+			data->status = data->status_signal;
+			data->status_signal = 0;
+		}
 	}
 }
 

@@ -50,6 +50,7 @@ int	print_error(char *cmd, char *arg, char *err_msg, int exit_code)
 		write(2, arg, ft_strlen(arg));
 		write(2, ": ", 2);
 	}
+	g_data.status = exit_code;
 	write(2, err_msg, ft_strlen((err_msg)));
 	write(2, "\n", 1);
 	return (exit_code);

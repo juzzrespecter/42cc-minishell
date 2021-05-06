@@ -30,7 +30,7 @@ void	end_of_file(t_data *data)
 	if (data->input[0] == '\0')
 	{
 		ft_putstr_fd("exit\n", STDOUT_FILENO);
-		tcsetattr(0, TCSANOW, &data->origin);
+		tcsetattr(0, TCSAFLUSH, &data->origin);
 		save_history(data);
 		exit(0);
 	}

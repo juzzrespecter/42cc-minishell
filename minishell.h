@@ -61,6 +61,7 @@ typedef struct s_data
 {
 	char			*input;
 	int				status;
+	int				status_signal;
 	char			**env;
 	char			*pwd;
 	int				fd_in;
@@ -159,5 +160,6 @@ void	save_history(t_data *g_data);
 void	history_mode(t_data *g_data);
 int		set_history_mode(t_data *g_data);
 void	free_data(t_data *g_data, int exit_code);
+void	sig_exec_init(void);
 
 #endif

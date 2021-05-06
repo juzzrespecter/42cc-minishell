@@ -37,7 +37,6 @@ void	b_exit(char **inputs, t_data *data)
 			return (ft_putstr_fd("Error: Numeric Argument Required\n", 2));
 		}
 	}
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &data->origin);
 	save_history(data);
 	free_env(inputs);
 	free_data(data, data->status);

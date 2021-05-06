@@ -5,13 +5,13 @@ void	free_data(t_data *data, int exit_code)
 	free_env(data->env);
 	free(data->pwd);
 	ft_putstr_fd("exit\n", 2);
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &data->origin);
 	exit(exit_code);
 }
 
 void	data_init(t_data *data, char **env)
 {
 	data->status = 0;
+	data->status_signal = 0;
 	data->input = NULL;
 	data->env = copy_env(env);
 	if (!data->env)
@@ -34,9 +34,11 @@ int	main(int argc, char **argv, char **envp)
 	sig_init();
 	while (1)
 	{
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, &g_data.modified);
 		ft_putstr_fd("DANFERminishell> ", 2);
 		g_data.input = ft_strdup("");
 		history_mode(&g_data);
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, &g_data.origin);
 		parser_start(g_data.input, &g_data);
 	}
 	return (0);

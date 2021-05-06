@@ -78,6 +78,5 @@ int	set_history_mode(t_data *data)
 		data->modified.c_lflag &= ~(ICANON | ECHO);
 		set_termcaps(data);
 	}
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &data->modified);
 	return (1);
 }
