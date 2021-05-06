@@ -59,6 +59,7 @@ typedef struct s_termc
 
 typedef struct s_data
 {
+	char			*prompt;
 	char			*input;
 	int				status;
 	int				status_signal;

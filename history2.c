@@ -4,7 +4,7 @@ int	clear_line(t_data *data)
 {
 	tputs(data->termc->clear_line, 1, putchar_2);
 	tputs(data->termc->cariage_return, 1, putchar_2);
-	ft_putstr_fd("DANFERminishell> ", STDOUT_FILENO);
+	ft_putstr_fd(data->prompt, STDOUT_FILENO);
 	return (1);
 }
 

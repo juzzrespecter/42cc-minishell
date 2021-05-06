@@ -6,7 +6,10 @@ void	handle_sig(int sig)
 	{
 		g_data.status = 130;
 		if (g_data.input)
-			ft_putstr_fd("\nDANFERminishell> ", 2);
+		{
+			ft_putchar_fd('\n', 2);
+			ft_putstr_fd(g_data.prompt, 2);
+		}
 		if (g_data.input)
 			free(g_data.input);
 		g_data.input = ft_strdup("\0");

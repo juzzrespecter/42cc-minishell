@@ -10,6 +10,7 @@ void	free_data(t_data *data, int exit_code)
 
 void	data_init(t_data *data, char **env)
 {
+	data->prompt = "\x1b[32m[\x1b[33mDANFERminishell\x1b[32m]~>\x1b[0m ";
 	data->status = 0;
 	data->status_signal = 0;
 	data->input = NULL;
@@ -35,7 +36,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &g_data.modified);
-		ft_putstr_fd("DANFERminishell> ", 2);
+		ft_putstr_fd(g_data.prompt, 2);
 		g_data.input = ft_strdup("");
 		history_mode(&g_data);
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &g_data.origin);
