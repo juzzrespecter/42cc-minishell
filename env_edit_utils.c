@@ -39,6 +39,7 @@ int	env_add_id(char *id, t_data *data)
 	{
 		if (ft_strncmp(data->env[i], id, (ft_strrchr(id, '=') - id + 1)) == 0)
 		{
+			free(data->env[i]);
 			data->env[i] = ft_strdup(id);
 			if (!data->env[i])
 				return (-1);
