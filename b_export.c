@@ -2,8 +2,8 @@
 
 static void	sort_env_cmp(char **env_sorted, int pos)
 {
-	int	cmp_out;
-	int	len_env;
+	int		cmp_out;
+	int		len_env;
 	char	*str_aux;
 
 	len_env = ft_strlen(env_sorted[pos]) + 1;
@@ -18,10 +18,10 @@ static void	sort_env_cmp(char **env_sorted, int pos)
 
 static char	**sort_env(char **env)
 {
-	char **env_sorted;
-	int	env_len;
-	int	i;
-	int	j;
+	char	**env_sorted;
+	int		env_len;
+	int		i;
+	int		j;
 
 	env_sorted = copy_env(env);
 	env_len = envlen(env_sorted);
@@ -33,7 +33,7 @@ static char	**sort_env(char **env)
 		{
 			if (env_sorted[j + 1] != NULL)
 				sort_env_cmp(env_sorted, j);
-			j++;	
+			j++;
 		}
 		j = 0;
 		i++;
@@ -46,7 +46,7 @@ static int	export_print(t_data *data)
 	int		i;
 	int		j;
 	char	*value;
-	char **env_sorted;
+	char	**env_sorted;
 
 	env_sorted = sort_env(data->env);
 	i = 0;
