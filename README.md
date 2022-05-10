@@ -22,8 +22,9 @@ Made by [@danrodri](https://profile.intra.42.fr/users/danrodri/), [@fgomez-s](ht
 * redirections
 * cmd signal handling
 
+## usage
 ```
-usage: make && ./minishell
+make && ./minishell
 ```
 
 
