@@ -40,7 +40,7 @@ int	is_word(char *input)
 
 int	is_blank(char input)
 {
-	if (!ft_strrchr(" \t\v\f\r", input))
+	if (!input || !ft_strrchr(" \t\v\f\r", input))
 		return (0);
 	return (1);
 }

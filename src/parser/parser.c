@@ -85,7 +85,10 @@ char	*input_cleaner(char *str)
 	len = 0;
 	len = input_len(str, &len, quote);
 	if (len == -1)
+	{
+		free(str_start);
 		return (0);
+	}
 	clean_input = (char *)malloc((len + 1) * sizeof(char));
 	if (!clean_input)
 		exit(EXIT_FAILURE);
