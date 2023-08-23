@@ -68,6 +68,9 @@ CXXFLAGS = -Wall -Werror -Wextra
 
 NAME	= minishell
 
+debug:	CXXFLAGS += -fsanitize=address -g3
+debug:	all
+
 all:	$(NAME)
 
 $(NAME): $(OBJ)
@@ -88,7 +91,7 @@ $(DIR_OBJ)%.o: $(DIR_CMD)%.c
 	$(CXX) $(CXXFLAGS) -c $< -I$(DIR_INC)
 	@mkdir -pv $(DIR_OBJ)
 	@mv -v $(@F) $(@D)
-
+	
 $(DIR_OBJ)%.o: $(DIR_UTILS)%.c
 	$(CXX) $(CXXFLAGS) -c $< -I$(DIR_INC)
 	@mkdir -pv $(DIR_OBJ)
