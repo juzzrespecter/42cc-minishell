@@ -69,7 +69,7 @@ CXXFLAGS = -Wall -Werror -Wextra
 NAME	= minishell
 
 debug:	CXXFLAGS += -fsanitize=address -g3
-debug:	all
+debug:	fclean all
 
 all:	$(NAME)
 
